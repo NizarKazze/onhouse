@@ -1,0 +1,94 @@
+import type { Event } from "@/types";
+
+/**
+ * Mock dataset standing in for the future `events` table.
+ * Copy is taken verbatim from the ONHOUSE design (EN + ES).
+ * Nothing outside `lib/events.ts` should import this.
+ */
+export const mockEvents: Event[] = [
+  {
+    id: "onhouse-001",
+    num: "001",
+    title: "ONHOUSE 001",
+    city: "IBIZA",
+    date: "TBA",
+    venue: "TBA",
+    doors: "23:59 — 06:00",
+    lineup: "TBA",
+    status: "next",
+    tag: { en: "UPCOMING", es: "PRÓXIMO" },
+    description: {
+      en: "The first ONHOUSE night in Ibiza. Venue, date and line-up are being confirmed and will be announced here first.",
+      es: "La primera noche ONHOUSE en Ibiza. Sala, fecha y cartel se están confirmando y se anunciarán aquí antes que en ningún otro sitio.",
+    },
+    slot: "onh-next-poster",
+  },
+  {
+    id: "onhouse-002",
+    num: "002",
+    title: "ONHOUSE 002",
+    city: "IBIZA",
+    date: "TBA",
+    venue: "TBA",
+    doors: "23:59 — 06:00",
+    lineup: "TBA",
+    status: "upcoming",
+    tag: { en: "UPCOMING", es: "PRÓXIMO" },
+    description: {
+      en: "The second night. Long-form deep house, one room, doors from 23:59. Venue and line-up are confirmed closer to the date.",
+      es: "La segunda noche. Deep house de sesión larga, una sola sala, puertas desde las 23:59. Sala y cartel se confirman cerca de la fecha.",
+    },
+    slot: "onh-deck-002",
+  },
+  {
+    id: "onhouse-003",
+    num: "003",
+    title: "ONHOUSE 003",
+    city: "IBIZA",
+    date: "TBA",
+    venue: "TBA",
+    doors: "23:59 — 06:00",
+    lineup: "TBA",
+    status: "upcoming",
+    tag: { en: "UPCOMING", es: "PRÓXIMO" },
+    description: {
+      en: "A residents night. Two extended sets, no support slots, the room taken slowly from house into tech house.",
+      es: "Noche de residentes. Dos sesiones largas, sin teloneros, llevando la sala del house al tech house poco a poco.",
+    },
+    slot: "onh-deck-003",
+  },
+  {
+    id: "onhouse-004",
+    num: "004",
+    title: "ONHOUSE 004",
+    city: "IBIZA",
+    date: "TBA",
+    venue: "TBA",
+    doors: "23:59 — 06:00",
+    lineup: "TBA",
+    status: "upcoming",
+    tag: { en: "UPCOMING", es: "PRÓXIMO" },
+    description: {
+      en: "A guest-led session. One name, one uninterrupted set, announced here before anywhere else.",
+      es: "Sesión con invitado. Un nombre, una sesión sin interrupciones, anunciada aquí antes que en ningún otro sitio.",
+    },
+    slot: "onh-deck-004",
+  },
+  {
+    id: "onhouse-005",
+    num: "005",
+    title: "ONHOUSE 005",
+    city: "IBIZA",
+    date: "TBA",
+    venue: "TBA",
+    doors: "23:59 — 06:00",
+    lineup: "TBA",
+    status: "upcoming",
+    tag: { en: "UPCOMING", es: "PRÓXIMO" },
+    description: {
+      en: "Closing the first season. Full line-up, extended hours and the archive of the season opened the morning after.",
+      es: "Cierre de la primera temporada. Cartel completo, horario ampliado y el archivo de la temporada abierto a la mañana siguiente.",
+    },
+    slot: "onh-deck-005",
+  },
+];
