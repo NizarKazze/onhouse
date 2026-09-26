@@ -27,7 +27,7 @@ export type Slot = {
 
 export const imageSlots: Record<string, Slot> = {
   "onh-hero": {
-    src: "/images/onh-hero.webp",
+    src: "/images/ONHOUSE_12.webp",
     view: { s: 1.1617036742727436, x: -5.302862287927156, y: -0.5682478404051405 },
     caption: "Hero club photograph — dancefloor or booth, flash, high contrast",
     alt: "The ONHOUSE neon sign above a packed DJ booth, shot on flash in black and white",
@@ -45,6 +45,7 @@ export const imageSlots: Record<string, Slot> = {
   "onh-deck-005": { caption: "ONHOUSE 005 poster", alt: "ONHOUSE 005 poster" },
 
   "onh-about": {
+    src: "/images/ONHOUSE_11.webp",
     caption: "Documentary crowd or booth photograph",
     alt: "ONHOUSE crowd photographed from the booth",
   },
@@ -71,10 +72,10 @@ export const imageSlots: Record<string, Slot> = {
   "onh-arch-2": { caption: "Night 02", alt: "ONHOUSE night, archive frame 02" },
   "onh-arch-3": { caption: "Night 03", alt: "ONHOUSE night, archive frame 03" },
 
-  "onh-vctr-1": { caption: "VCTR — booth", alt: "VCTR in the DJ booth" },
-  "onh-vctr-2": { caption: "VCTR — portrait", alt: "Portrait of VCTR" },
-  "onh-vctr-3": { caption: "VCTR — crowd", alt: "The crowd during a VCTR set" },
-  "onh-vctr-4": { caption: "VCTR — room", alt: "The room during a VCTR set" },
+  "onh-vctr-1": { src: "/images/ONHOUSE_3.webp", caption: "VCTR — booth", alt: "VCTR in the DJ booth" },
+  "onh-vctr-2": { src: "/images/ONHOUSE_2.webp", caption: "VCTR — portrait", alt: "Portrait of VCTR" },
+  "onh-vctr-3": { src: "/images/ONHOUSE_4.webp", caption: "VCTR — crowd", alt: "The crowd during a VCTR set" },
+  "onh-vctr-4": { src: "/images/ONHOUSE_10.webp", caption: "VCTR — room", alt: "The room during a VCTR set" },
 
   "onh-footer": {
     caption: "Footer background — wide, dark dancefloor or booth photograph",
