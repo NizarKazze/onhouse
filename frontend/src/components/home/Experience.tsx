@@ -24,68 +24,60 @@ export function Experience() {
         }}
       >
         <div className="min-w-0">
-          {/* Oversized numerals sliding in from the right, stretched
-              vertically and cropped by the frame — a graphic element, so it
-              is hidden from assistive tech (the pillars below carry it). */}
+
           <div
-            className="relative mt-[clamp(20px,3vw,52px)] h-[clamp(330px,40vw,660px)] overflow-hidden"
-            style={{ borderTop: RULE, borderRight: RULE }}
-            aria-hidden="true"
+            className="grid grid-cols-3 divide-x"
+            style={{ borderRight: RULE, "--tw-divide-opacity": 1 } as React.CSSProperties}
           >
-            <div className="absolute inset-0 flex items-end justify-end gap-0 mr-[clamp(-150px,-9vw,-44px)]">
-              {t.pillars.map((pillar, index) => (
+            {t.pillars.map((pillar, index) => (
+              <div key={pillar.num} className="min-w-0" style={{ borderColor: "rgba(10,10,10,.4)" }}>
+
+                <div
+                  className="relative mt-[clamp(20px,3vw,52px)] h-[clamp(330px,40vw,660px)] overflow-hidden"
+                  aria-hidden="true"
+                >
+                  <div className="absolute inset-0 flex items-end justify-center translate-x-[clamp(35px,5vw,80px)]">
+                    <Reveal
+                      from="translateX(40vw)"
+                      transition={`opacity 1.1s var(--onh-ease) ${(index * 0.18).toFixed(2)}s, transform 1.25s var(--onh-ease) ${(index * 0.18).toFixed(2)}s`}
+                      className="leading-[0]"
+                    >
+                      <span
+                        className="inline-block text-[clamp(200px,24vw,440px)] leading-[0.78] font-black tracking-[-0.07em]"
+                        style={{
+                          transform: "scaleY(2.1) scaleX(1.1)",
+                          transformOrigin: "bottom center",
+                        }}
+                      >
+                        {pillar.num}
+                      </span>
+                    </Reveal>
+                  </div>
+                </div>
+
+                {/* TEXTO */}
                 <Reveal
-                  key={pillar.num}
-                  from="translateX(46vw)"
-                  transition={`opacity 1.1s var(--onh-ease) ${(index * 0.18).toFixed(2)}s, transform 1.25s var(--onh-ease) ${(index * 0.18).toFixed(2)}s`}
-                  className="relative flex-none leading-[0]"
+                  duration={0.8}
+                  from="translateY(20px)"
+                  className="px-[clamp(12px,1.6vw,26px)] pt-[clamp(18px,2.2vw,34px)] pb-[clamp(24px,3vw,44px)] text-center"
                 >
-                  <span
-                    className="inline-block text-[clamp(200px,24vw,440px)] leading-[0.78] font-black tracking-[-0.07em]"
-                    style={{
-                      transform: "scaleY(1.72)",
-                      transformOrigin: "bottom center",
-                    }}
+                  <h3 className="mt-0 mb-[clamp(12px,1.6vw,22px)] text-[clamp(15px,1.5vw,23px)] leading-none font-extrabold tracking-[-0.01em]">
+                    {pillar.title}
+                  </h3>
+                  <p
+                    className="mx-auto my-0 max-w-[22ch] text-[clamp(11.5px,1vw,14px)] leading-[1.5] text-onh-ink-soft"
+                    style={{ textWrap: "pretty" }}
                   >
-                    {pillar.num}
-                  </span>
+                    {pillar.body}
+                  </p>
                 </Reveal>
-              ))}
-            </div>
-
-            <div className="pointer-events-none absolute inset-0 grid grid-cols-3">
-              <div style={{ borderLeft: RULE }} />
-              <div style={{ borderLeft: RULE }} />
-              <div style={{ borderLeft: RULE }} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3" style={{ borderTop: RULE }}>
-            {t.pillars.map((pillar) => (
-              <Reveal
-                key={pillar.num}
-                duration={0.8}
-                from="translateY(20px)"
-                className="min-w-0 px-[clamp(12px,1.6vw,26px)] pt-[clamp(18px,2.2vw,34px)] pb-[clamp(24px,3vw,44px)] text-center"
-                style={{ borderLeft: RULE }}
-              >
-                <h3 className="mt-0 mb-[clamp(12px,1.6vw,22px)] text-[clamp(15px,1.5vw,23px)] leading-none font-extrabold tracking-[-0.01em]">
-                  {pillar.title}
-                </h3>
-                <p
-                  className="mx-auto my-0 max-w-[22ch] text-[clamp(11.5px,1vw,14px)] leading-[1.5] text-onh-ink-soft"
-                  style={{ textWrap: "pretty" }}
-                >
-                  {pillar.body}
-                </p>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>
 
         <div
           className="flex min-w-0 flex-col pt-[clamp(24px,3vw,44px)] pl-[clamp(20px,2.6vw,44px)]"
-          style={{ borderLeft: RULE, borderTop: RULE }}
         >
           <h2
             className="m-0 text-[clamp(30px,4vw,64px)] leading-[0.94] font-extrabold tracking-[-0.025em] uppercase"
