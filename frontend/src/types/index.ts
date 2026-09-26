@@ -19,6 +19,12 @@ export type Event = {
   city: string;
   /** Kept as free text: the design shows "TBA" until a date is confirmed. */
   date: string;
+  /**
+   * Machine-readable start/end (ISO 8601), or `null` while the date is TBA.
+   * `date` stays the display string; these drive sorting and expiry.
+   */
+  startsAt: string | null;
+  endsAt: string | null;
   venue: string;
   doors: string;
   lineup: string;

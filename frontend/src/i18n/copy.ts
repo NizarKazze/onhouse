@@ -90,6 +90,9 @@ export type Dictionary = {
   notFoundBody: string;
   backHome: string;
   loading: string;
+  prevPage: string;
+  nextPage: string;
+  pagination: string;
 };
 
 export const copy: Record<Locale, Dictionary> = {
@@ -199,6 +202,9 @@ export const copy: Record<Locale, Dictionary> = {
     notFoundBody: "This page does not exist. The music is happening elsewhere.",
     backHome: "BACK HOME",
     loading: "LOADING",
+    prevPage: "PREV",
+    nextPage: "NEXT",
+    pagination: "Events pages",
   },
   es: {
     navEvents: "EVENTOS",
@@ -306,6 +312,9 @@ export const copy: Record<Locale, Dictionary> = {
     notFoundBody: "Esta página no existe. La música está en otro sitio.",
     backHome: "VOLVER AL INICIO",
     loading: "CARGANDO",
+    prevPage: "ANT.",
+    nextPage: "SIG.",
+    pagination: "Páginas de eventos",
   },
 };
 

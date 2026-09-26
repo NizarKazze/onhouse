@@ -1,5 +1,6 @@
 "use client";
 
+import { EventGrid } from "@/components/events/EventGrid";
 import { SectionLink } from "@/components/layout/SectionLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
 import { useLanguage } from "@/i18n/LanguageProvider";
@@ -21,9 +22,6 @@ export function EventsPageContent({
   const narrow = useNarrow();
 
   const halfCols = narrow ? "1fr" : "1fr 1fr";
-  const rowCols = narrow
-    ? "auto 1fr"
-    : "clamp(56px,5vw,90px) minmax(0,1fr) 160px 140px";
   const sectionHead =
     "onh-kicker mb-[clamp(24px,3vw,44px)] border-b border-[var(--onh-line)] pb-[18px] text-[rgba(242,240,238,.6)]";
 
@@ -104,30 +102,7 @@ export function EventsPageContent({
             </p>
           )}
 
-          {upcoming.length > 0 && (
-            <div className="border-t border-[var(--onh-line)]">
-              {upcoming.map((event) => (
-                <div
-                  key={event.id}
-                  className="grid items-baseline gap-[clamp(12px,2vw,28px)] border-b border-[var(--onh-line)] py-[clamp(20px,2.6vw,34px)] transition-colors duration-300 hover:bg-[rgba(242,240,238,.04)]"
-                  style={{ gridTemplateColumns: rowCols }}
-                >
-                  <div className="font-display text-[clamp(28px,3.4vw,56px)] leading-[0.9] text-[rgba(242,240,238,.4)]">
-                    {event.num}
-                  </div>
-                  <div className="text-[clamp(20px,2.4vw,38px)] leading-none font-black tracking-[-0.02em] uppercase">
-                    {event.title}
-                  </div>
-                  <div className="text-[11.5px] font-semibold tracking-[0.2em] text-[rgba(242,240,238,.6)]">
-                    {event.city} — {t.date} {event.date}
-                  </div>
-                  <div className="text-[11.5px] font-semibold tracking-[0.2em] text-onh-bone">
-                    {event.tag[lang]}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <EventGrid events={upcoming} />
         </div>
       </section>
 
