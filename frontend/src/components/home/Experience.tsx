@@ -3,12 +3,18 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useNarrow } from "@/lib/hooks";
+import { ExperienceIntro } from "@/components/home/ExperienceIntro";
+import { ExperienceMobile } from "@/components/home/ExperienceMobile";
 
 const RULE = "1px solid rgba(10,10,10,.4)";
 
 export function Experience() {
-  const { t } = useLanguage();
   const narrow = useNarrow();
+  return narrow ? <ExperienceMobile /> : <ExperienceDesktop />;
+}
+
+function ExperienceDesktop() {
+  const { t } = useLanguage();
 
   return (
     <section
@@ -17,11 +23,7 @@ export function Experience() {
     >
       <div
         className="onh-shell grid gap-0"
-        style={{
-          gridTemplateColumns: narrow
-            ? "1fr"
-            : "minmax(0,1.5fr) minmax(0,.78fr)",
-        }}
+        style={{ gridTemplateColumns: "minmax(0,1.5fr) minmax(0,.78fr)" }}
       >
         <div className="min-w-0">
 
@@ -79,38 +81,7 @@ export function Experience() {
         <div
           className="flex min-w-0 flex-col pt-[clamp(24px,3vw,44px)] pl-[clamp(20px,2.6vw,44px)]"
         >
-          <h2
-            className="m-0 text-[clamp(30px,4vw,64px)] leading-[0.94] font-extrabold tracking-[-0.025em] uppercase"
-            style={{ textWrap: "balance" }}
-          >
-            {t.expKicker}
-          </h2>
-
-          <div className="mt-[clamp(16px,2vw,26px)] flex items-center gap-[10px]">
-            <span className="rounded-full border-[1.5px] border-onh-black px-[13px] pt-[5px] pb-[4px] text-[11px] font-extrabold tracking-[0.12em]">
-              ONHOUSE
-            </span>
-            <span className="h-[20px] w-[20px] rounded-full bg-onh-black" />
-          </div>
-
-          <p
-            className="mt-[clamp(22px,3vw,40px)] mb-0 max-w-[32ch] text-[clamp(14px,1.15vw,18px)] leading-[1.55] font-medium"
-            style={{ textWrap: "pretty" }}
-          >
-            {t.expIntro1}
-          </p>
-          <p
-            className="mt-[clamp(20px,2.4vw,34px)] mb-0 max-w-[36ch] text-justify text-[clamp(12.5px,1vw,15px)] leading-[1.62] text-onh-ink-soft"
-            style={{ textWrap: "pretty" }}
-          >
-            {t.expIntro2}
-          </p>
-          <p
-            className="mt-[clamp(14px,1.6vw,22px)] mb-0 max-w-[36ch] text-justify text-[clamp(12.5px,1vw,15px)] leading-[1.62] text-onh-ink-soft"
-            style={{ textWrap: "pretty" }}
-          >
-            {t.expIntro3}
-          </p>
+          <ExperienceIntro />
         </div>
       </div>
     </section>

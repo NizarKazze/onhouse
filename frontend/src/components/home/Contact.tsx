@@ -5,7 +5,7 @@ import { useLanguage } from "@/i18n/LanguageProvider";
 import { useNarrow } from "@/lib/hooks";
 
 const VALUE =
-  "text-[clamp(15px,1.5vw,21px)] font-semibold tracking-[-0.01em]";
+  "text-[clamp(15px,1.5vw,21px)] font-semibold tracking-[-0.01em] [overflow-wrap:anywhere]";
 
 function DetailRow({
   label,
@@ -35,7 +35,7 @@ export function Contact() {
 
         <div
           className="grid gap-[clamp(30px,4vw,64px)]"
-          style={{ gridTemplateColumns: narrow ? "1fr" : "1.1fr .9fr" }}
+          style={{ gridTemplateColumns: narrow ? "minmax(0,1fr)" : "1.1fr .9fr" }}
         >
           <div>
             <h2

@@ -87,16 +87,16 @@ export function NextEvent({ event }: { event: Event | null }) {
               <MetaCell label={t.lineup} value={event.lineup} />
             </div>
 
-            <div className="mt-[clamp(2px,0.4vw,6px)] flex flex-wrap gap-[14px]">
+            <div className="onh-btn-row mt-[clamp(2px,0.4vw,6px)]">
               <SectionLink
                 href="/#contact"
-                className="onh-btn-solid px-[30px] py-[17px] text-[12px]"
+                className="onh-btn-solid onh-btn-cta [--onh-btn-px:30px]"
               >
                 {t.tickets}
               </SectionLink>
               <SectionLink
                 href="/events"
-                className="onh-btn-ghost px-[30px] py-[17px] text-[12px]"
+                className="onh-btn-ghost onh-btn-cta [--onh-btn-px:30px]"
               >
                 {t.allEvents}
               </SectionLink>

@@ -180,6 +180,37 @@
     background: rgba(242, 240, 238, 0.07);
   }
 
+  /* A row of CTAs. Wraps freely on wide screens; on phones the buttons share
+     one line and scale down with the viewport rather than stacking. Paired
+     with `.onh-btn-cta`, which carries the size so the phone override below
+     is not outranked by per-button utilities. */
+  .onh-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--onh-btn-gap, 14px);
+  }
+
+  .onh-btn-cta {
+    padding: var(--onh-btn-py, 17px) var(--onh-btn-px, 28px);
+    font-size: var(--onh-btn-fs, 12px);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .onh-btn-row {
+      flex-wrap: nowrap;
+      gap: 10px;
+    }
+
+    .onh-btn-row > .onh-btn-cta {
+      flex: 1 1 auto;
+      padding: 15px clamp(10px, 3.2vw, 18px);
+      font-size: clamp(9.5px, 2.75vw, 11.5px);
+      letter-spacing: 0.14em;
+    }
+  }
+
   /* The rule + label row that opens most sections. */
   .onh-rule-head {
     display: flex;

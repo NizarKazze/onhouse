@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import { SectionLink } from "@/components/layout/SectionLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
 import { MetaCell } from "@/components/ui/MetaCell";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useNarrow } from "@/lib/hooks";
+import { useStickyProgress } from "@/lib/useStickyProgress";
 import type { Event } from "@/types";
 
 /** Stage height, and the scroll distance spent on each additional card. */
@@ -14,82 +14,11 @@ const stageHeightFor = (narrow: boolean) =>
   narrow ? "clamp(668px,172vw,760px)" : "clamp(400px,44vw,560px)";
 const VH_PER_CARD = { narrow: 66, wide: 76 } as const;
 
-/**
- * The deck is a tall track with a sticky stage inside it. Scroll position
- * within the track maps to a fractional card index (`dp`), and each card is
- * transformed by its distance from that index — so the stack peels forward as
- * you scroll. All offsets and easing constants come from the design.
- */
-function useDeckProgress(count: number) {
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const frame = useRef(0);
-  const [dp, setDp] = useState(0);
-
-  const geometry = useCallback(() => {
-    const track = trackRef.current;
-    const stage = stageRef.current;
-    if (!track || !stage) return null;
-    const usable = track.offsetHeight - stage.offsetHeight;
-    if (usable <= 0) return null;
-    const top = Number.parseFloat(getComputedStyle(stage).top) || 0;
-    return { track, usable, top };
-  }, []);
-
-  const tick = useCallback(() => {
-    const geom = geometry();
-    if (!geom) return;
-    const raw =
-      (geom.top - geom.track.getBoundingClientRect().top) / geom.usable;
-    const next = Math.max(0, Math.min(1, raw)) * (count - 1);
-    setDp((current) => (Math.abs(next - current) > 0.002 ? next : current));
-  }, [geometry, count]);
-
-  useEffect(() => {
-    if (count < 2) return;
-
-    const onScroll = () => {
-      if (frame.current) return;
-      frame.current = requestAnimationFrame(() => {
-        frame.current = 0;
-        tick();
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", tick);
-    const settle = window.setTimeout(tick, 120);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", tick);
-      window.clearTimeout(settle);
-      if (frame.current) cancelAnimationFrame(frame.current);
-    };
-  }, [tick, count]);
-
-  /** Scroll so that card `index` becomes the active one. */
-  const goTo = useCallback(
-    (index: number) => {
-      const geom = geometry();
-      if (!geom) return;
-      const absoluteTop =
-        geom.track.getBoundingClientRect().top + window.scrollY;
-      const y =
-        absoluteTop - geom.top + (index / (count - 1)) * geom.usable;
-      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-    },
-    [geometry, count],
-  );
-
-  return { trackRef, stageRef, dp, goTo };
-}
-
 export function EventDeck({ events }: { events: Event[] }) {
   const { t, lang } = useLanguage();
   const narrow = useNarrow();
   const count = events.length;
-  const { trackRef, stageRef, dp, goTo } = useDeckProgress(count);
+  const { trackRef, stageRef, dp, goTo } = useStickyProgress(count);
 
   if (count === 0) {
     return (
@@ -232,16 +161,16 @@ export function EventDeck({ events }: { events: Event[] }) {
                           <MetaCell label={t.venue} value={event.venue} compact />
                         </div>
 
-                        <div className="flex flex-wrap gap-[12px]">
+                        <div className="onh-btn-row [--onh-btn-gap:12px] [--onh-btn-px:26px] [--onh-btn-py:15px] [--onh-btn-fs:11.5px]">
                           <SectionLink
                             href="/#contact"
-                            className="onh-btn-solid px-[26px] py-[15px] text-[11.5px]"
+                            className="onh-btn-solid onh-btn-cta"
                           >
                             {t.tickets}
                           </SectionLink>
                           <SectionLink
                             href="/events"
-                            className="onh-btn-ghost px-[26px] py-[15px] text-[11.5px]"
+                            className="onh-btn-ghost onh-btn-cta"
                           >
                             {t.allEvents}
                           </SectionLink>

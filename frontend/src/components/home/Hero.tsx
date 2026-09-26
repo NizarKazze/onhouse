@@ -31,23 +31,23 @@ export function Hero() {
           </div>
 
           <h1
-            className="m-0 max-w-[16ch] text-[clamp(52px,11.5vw,196px)] leading-[0.86] font-black tracking-[-0.02em] uppercase"
+            className="m-0 max-w-[16ch] text-[clamp(52px,11.5vw,196px)] max-[600px]:text-[clamp(40px,13.5vw,64px)] leading-[0.86] font-black tracking-[-0.02em] uppercase"
             style={{ textWrap: "balance" }}
           >
             {t.heroLine1}{" "}
             <span className="text-[rgba(242,240,238,.5)]">{t.heroLine2}</span>
           </h1>
 
-          <div className="pointer-events-auto mt-[clamp(24px,3.5vw,44px)] flex flex-wrap items-center gap-[clamp(14px,2vw,26px)]">
+          <div className="onh-btn-row pointer-events-auto mt-[clamp(24px,3.5vw,44px)] [--onh-btn-gap:clamp(14px,2vw,26px)]">
             <SectionLink
               href="/#next"
-              className="onh-btn-solid px-[28px] py-[17px] text-[12px]"
+              className="onh-btn-solid onh-btn-cta"
             >
               {t.ctaNext}
             </SectionLink>
             <SectionLink
               href="/#about"
-              className="onh-btn-ghost px-[28px] py-[17px] text-[12px]"
+              className="onh-btn-ghost onh-btn-cta"
             >
               {t.ctaDiscover}
             </SectionLink>
@@ -56,7 +56,7 @@ export function Hero() {
       </div>
 
       <div
-        className="absolute right-[var(--onh-gutter)] bottom-[clamp(40px,6vw,78px)] flex items-center gap-[14px] text-[10px] font-medium tracking-[0.34em] text-[rgba(242,240,238,.45)]"
+        className="absolute right-[var(--onh-gutter)] bottom-[clamp(40px,6vw,78px)] flex items-center max-[600px]:hidden gap-[14px] text-[10px] font-medium tracking-[0.34em] text-[rgba(242,240,238,.45)]"
         style={{ writingMode: "vertical-rl" }}
         aria-hidden="true"
       >
