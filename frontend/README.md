@@ -107,3 +107,14 @@ by `x`/`y` as a percentage of the frame.
   IntersectionObserver, and a scroll "sweep" that only tests the vertical axis.
   The sweep is load-bearing — the Experience numerals start at
   `translateX(46vw)` and never intersect the viewport.
+
+## Backend / data
+
+Events and artists come from the ONHOUSE API (`../backend`, see its README).
+
+- `API_URL` (server-side env var, see `.env.example`): backend origin. Pages
+  read `GET /api/events` and `GET /api/artists` at render time and revalidate
+  every 60 s; browser calls to `/api/*` (the `/admin` panel) are proxied there.
+- Without `API_URL` the site renders the bundled mock data in `src/data/`.
+- `/admin` is the management panel (login, events, artists). Access control is
+  enforced by the backend, not by hiding the route.

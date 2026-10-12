@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, Jost } from "next/font/google";
 import "./globals.css";
-import { GrainOverlay } from "@/components/layout/GrainOverlay";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LanguageProvider } from "@/i18n/LanguageProvider";
 
 const jost = Jost({
@@ -45,14 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jost.variable} ${bebas.variable}`}>
       <body>
-        <LanguageProvider>
-          <SiteHeader />
-          <main id="top" className="block">
-            {children}
-          </main>
-          <SiteFooter />
-          <GrainOverlay />
-        </LanguageProvider>
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

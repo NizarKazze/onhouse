@@ -8,7 +8,7 @@ import { useNarrow } from "@/lib/hooks";
 import type { Artist } from "@/types";
 
 export function ArtistRows({ artists }: { artists: Artist[] }) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const narrow = useNarrow();
   const [hovered, setHovered] = useState(-1);
 
@@ -64,7 +64,7 @@ export function ArtistRows({ artists }: { artists: Artist[] }) {
                 </div>
 
                 <div className="text-[11.5px] font-semibold tracking-[0.2em] text-[rgba(242,240,238,.6)]">
-                  {artist.genre[lang]}
+                  {artist.genre}
                 </div>
 
                 <div className="text-[11.5px] font-semibold tracking-[0.2em] text-[rgba(242,240,238,.45)]">
@@ -84,7 +84,12 @@ export function ArtistRows({ artists }: { artists: Artist[] }) {
                     aria-hidden="true"
                   >
                     <div className="absolute inset-0 grayscale contrast-[1.15] brightness-[0.75]">
-                      <ImageSlot id={artist.slot} sizes="180px" />
+                      <ImageSlot
+                        src={artist.image}
+                        caption="Artist portrait"
+                        alt=""
+                        sizes="180px"
+                      />
                     </div>
                     <div className="absolute inset-0 bg-[rgba(10,10,10,.35)] mix-blend-multiply" />
                   </div>

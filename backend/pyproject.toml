@@ -1,0 +1,31 @@
+[project]
+name = "onhouse-api"
+version = "1.0.0"
+requires-python = ">=3.12"
+# Vercel installs from this list (it takes precedence over requirements.txt).
+# Keep it identical to requirements.txt; tests/test_dependencies.py checks it.
+dependencies = [
+    "fastapi==0.141.1",
+    "starlette==1.7.0",
+    "uvicorn[standard]==0.54.0",
+    "SQLAlchemy==2.1.1",
+    "alembic==1.20.0",
+    "psycopg[binary]==3.3.6",
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    "argon2-cffi==25.1.0",
+    "tzdata==2026.4",
+    "certifi==2026.7.22",
+    "python-multipart==0.0.32",
+    "pillow==12.3.0",
+    "boto3==1.43.104",
+]
+
+[tool.vercel]
+entrypoint = "app.main:app"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+filterwarnings = ["error::DeprecationWarning:app.*"]

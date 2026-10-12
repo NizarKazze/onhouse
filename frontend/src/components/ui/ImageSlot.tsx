@@ -1,9 +1,16 @@
 import Image from "next/image";
-import { getSlot } from "@/lib/images";
+import { getSlot, type Slot } from "@/lib/images";
 
 type ImageSlotProps = {
   /** Slot id from the design, e.g. "onh-hero". */
-  id: string;
+  id?: string;
+  /**
+   * An image managed from the admin (event poster, artist portrait): an https
+   * URL or a file under /images. Takes precedence over the slot registry.
+   */
+  src?: string | null;
+  /** Placeholder note when there is no image yet. */
+  caption?: string;
   /** Load eagerly — use for above-the-fold imagery only. */
   priority?: boolean;
   /** Overrides the registry alt when context makes a better one available. */
@@ -23,8 +30,12 @@ type ImageSlotProps = {
  * An unfilled slot keeps the layout and shows its art-direction note, so the
  * composition holds until the photograph is dropped in.
  */
-export function ImageSlot({ id, priority, alt, sizes }: ImageSlotProps) {
-  const slot = getSlot(id);
+export function ImageSlot({ id, src, caption, priority, alt, sizes }: ImageSlotProps) {
+  const slot: Slot | undefined = src
+    ? { src, alt: alt ?? caption ?? "", caption: caption ?? "" }
+    : id
+      ? getSlot(id)
+      : undefined;
 
   if (!slot?.src) {
     return (
@@ -45,7 +56,7 @@ export function ImageSlot({ id, priority, alt, sizes }: ImageSlotProps) {
           className="relative m-[clamp(12px,1.6vw,22px)] max-w-[28ch] text-[9.5px] leading-[1.5] font-semibold tracking-[0.2em] text-[rgba(242,240,238,0.32)] uppercase"
           style={{ textWrap: "pretty" }}
         >
-          {slot?.caption ?? id}
+          {slot?.caption ?? caption ?? id}
         </span>
       </div>
     );
@@ -57,6 +68,11 @@ export function ImageSlot({ id, priority, alt, sizes }: ImageSlotProps) {
       ? undefined
       : `translate(${view.x}%, ${view.y}%) scale(${view.s})`;
 
+  // Remote images come from whatever host the admin used, so they skip the
+  // optimiser (which only serves an allow-list of hosts). Admin uploads are
+  // already resized WebP served through the /uploads proxy.
+  const unoptimized = /^https?:\/\//.test(slot.src) || slot.src.startsWith("/uploads/");
+
   return (
     <Image
       src={slot.src}
@@ -64,6 +80,7 @@ export function ImageSlot({ id, priority, alt, sizes }: ImageSlotProps) {
       fill
       priority={priority}
       sizes={sizes ?? "100vw"}
+      unoptimized={unoptimized}
       className="object-cover"
       style={transform ? { transform } : undefined}
     />

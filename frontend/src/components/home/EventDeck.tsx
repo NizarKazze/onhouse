@@ -2,6 +2,7 @@
 
 import { SectionLink } from "@/components/layout/SectionLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
+import { TicketLink } from "@/components/ui/TicketLink";
 import { MetaCell } from "@/components/ui/MetaCell";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanguage } from "@/i18n/LanguageProvider";
@@ -125,7 +126,9 @@ export function EventDeck({ events }: { events: Event[] }) {
                       <div className="relative min-h-0 overflow-hidden bg-onh-panel">
                         <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
                           <ImageSlot
-                            id={event.slot}
+                            src={event.image}
+                            caption={`${event.title} poster`}
+                            alt={`${event.title} poster`}
                             sizes="(max-width: 900px) 100vw, 40vw"
                           />
                         </div>
@@ -162,12 +165,12 @@ export function EventDeck({ events }: { events: Event[] }) {
                         </div>
 
                         <div className="onh-btn-row [--onh-btn-gap:12px] [--onh-btn-px:26px] [--onh-btn-py:15px] [--onh-btn-fs:11.5px]">
-                          <SectionLink
-                            href="/#contact"
+                          <TicketLink
+                            href={event.ticketUrl}
                             className="onh-btn-solid onh-btn-cta"
                           >
                             {t.tickets}
-                          </SectionLink>
+                          </TicketLink>
                           <SectionLink
                             href="/events"
                             className="onh-btn-ghost onh-btn-cta"

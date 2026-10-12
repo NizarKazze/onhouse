@@ -1,8 +1,8 @@
 "use client";
 
 import { EventGrid } from "@/components/events/EventGrid";
-import { SectionLink } from "@/components/layout/SectionLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
+import { TicketLink } from "@/components/ui/TicketLink";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useNarrow } from "@/lib/hooks";
 import type { Event } from "@/types";
@@ -56,7 +56,9 @@ export function EventsPageContent({
               <div className="relative min-h-[280px] overflow-hidden bg-onh-panel [aspect-ratio:16/11]">
                 <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
                   <ImageSlot
-                    id="onh-ev-001"
+                    src={nextEvent.image}
+                    caption={`${nextEvent.title} key visual`}
+                    alt={`${nextEvent.title} poster`}
                     priority
                     sizes="(max-width: 900px) 100vw, 50vw"
                   />
@@ -87,12 +89,12 @@ export function EventsPageContent({
                   {nextEvent.description[lang]}
                 </p>
                 <div className="flex flex-wrap gap-[14px]">
-                  <SectionLink
-                    href="/#contact"
+                  <TicketLink
+                    href={nextEvent.ticketUrl}
                     className="onh-btn-solid px-[28px] py-[16px] text-[12px]"
                   >
                     {t.tickets}
-                  </SectionLink>
+                  </TicketLink>
                 </div>
               </div>
             </div>
@@ -131,17 +133,28 @@ export function EventsPageContent({
             {/* The archive is empty until 001 has happened: the design shows
                 three plates as a placeholder for the documentation to come. */}
             <div className="grid grid-cols-3 gap-[10px]">
-              {(past.length > 0
-                ? past.slice(0, 3).map((event) => event.slot)
-                : ["onh-arch-1", "onh-arch-2", "onh-arch-3"]
-              ).map((slot) => (
-                <div
-                  key={slot}
-                  className="relative overflow-hidden grayscale contrast-[1.15] brightness-[0.8] [aspect-ratio:2/3]"
-                >
-                  <ImageSlot id={slot} sizes="(max-width: 900px) 33vw, 17vw" />
-                </div>
-              ))}
+              {past.length > 0
+                ? past.slice(0, 3).map((event) => (
+                    <div
+                      key={event.id}
+                      className="relative overflow-hidden grayscale contrast-[1.15] brightness-[0.8] [aspect-ratio:2/3]"
+                    >
+                      <ImageSlot
+                        src={event.image}
+                        caption={event.title}
+                        alt={`${event.title}, archive`}
+                        sizes="(max-width: 900px) 33vw, 17vw"
+                      />
+                    </div>
+                  ))
+                : ["onh-arch-1", "onh-arch-2", "onh-arch-3"].map((slot) => (
+                    <div
+                      key={slot}
+                      className="relative overflow-hidden grayscale contrast-[1.15] brightness-[0.8] [aspect-ratio:2/3]"
+                    >
+                      <ImageSlot id={slot} sizes="(max-width: 900px) 33vw, 17vw" />
+                    </div>
+                  ))}
             </div>
           </div>
         </div>

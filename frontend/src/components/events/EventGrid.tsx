@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { SectionLink } from "@/components/layout/SectionLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
+import { TicketLink } from "@/components/ui/TicketLink";
 import { MetaCell } from "@/components/ui/MetaCell";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { scrollToHash } from "@/lib/hooks";
@@ -115,7 +115,9 @@ function EventCard({ event }: { event: Event }) {
       <div className="relative overflow-hidden bg-onh-panel [aspect-ratio:4/3]">
         <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
           <ImageSlot
-            id={event.slot}
+            src={event.image}
+            caption={`${event.title} poster`}
+            alt={`${event.title} poster`}
             sizes="(max-width: 599px) 100vw, (max-width: 900px) 50vw, 33vw"
           />
         </div>
@@ -151,12 +153,12 @@ function EventCard({ event }: { event: Event }) {
         </div>
 
         <div>
-          <SectionLink
-            href="/#contact"
+          <TicketLink
+            href={event.ticketUrl}
             className="onh-btn-solid px-[24px] py-[14px] text-[11px]"
           >
             {t.tickets}
-          </SectionLink>
+          </TicketLink>
         </div>
       </div>
     </article>

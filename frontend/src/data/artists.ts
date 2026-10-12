@@ -1,58 +1,64 @@
-import type { Artist } from "@/types";
+import type { ApiArtist } from "@/lib/api";
 
 /**
- * Mock dataset for the artist roster.
- * The design ships every name as TBA — line-ups are only published once a set
- * is confirmed — so the roster carries the slot, number and genre only.
+ * Fallback roster used only when `API_URL` is not configured. Same shape as
+ * `GET /api/artists`. The design ships every name as TBA — line-ups are only
+ * published once a set is confirmed.
  * Nothing outside `lib/artists.ts` should import this.
  */
-export const mockArtists: Artist[] = [
+export const mockArtists: ApiArtist[] = [
   {
-    id: "artist-01",
-    num: "01",
+    id: 1,
     name: "TBA",
-    genre: { en: "HOUSE", es: "HOUSE" },
-    nextEvent: "ONHOUSE 001",
-    slot: "onh-artist-1",
+    genre: "HOUSE",
+    description: null,
+    imageUrl: null,
+    links: [],
+    nextEvent: { id: 1, number: 1, title: "ONHOUSE 001" },
   },
   {
-    id: "artist-02",
-    num: "02",
+    id: 2,
     name: "TBA",
-    genre: { en: "DEEP HOUSE", es: "DEEP HOUSE" },
-    nextEvent: "ONHOUSE 001",
-    slot: "onh-artist-2",
+    genre: "DEEP HOUSE",
+    description: null,
+    imageUrl: null,
+    links: [],
+    nextEvent: { id: 1, number: 1, title: "ONHOUSE 001" },
   },
   {
-    id: "artist-03",
-    num: "03",
+    id: 3,
     name: "TBA",
-    genre: { en: "TECH HOUSE", es: "TECH HOUSE" },
-    nextEvent: "ONHOUSE 001",
-    slot: "onh-artist-3",
+    genre: "TECH HOUSE",
+    description: null,
+    imageUrl: null,
+    links: [],
+    nextEvent: { id: 1, number: 1, title: "ONHOUSE 001" },
   },
   {
-    id: "artist-04",
-    num: "04",
+    id: 4,
     name: "TBA",
-    genre: { en: "HOUSE", es: "HOUSE" },
-    nextEvent: "ONHOUSE 001",
-    slot: "onh-artist-4",
+    genre: "HOUSE",
+    description: null,
+    imageUrl: null,
+    links: [],
+    nextEvent: { id: 1, number: 1, title: "ONHOUSE 001" },
   },
   {
-    id: "artist-05",
-    num: "05",
+    id: 5,
     name: "TBA",
-    genre: { en: "DEEP HOUSE", es: "DEEP HOUSE" },
-    nextEvent: "ONHOUSE 001",
-    slot: "onh-artist-5",
+    genre: "DEEP HOUSE",
+    description: null,
+    imageUrl: null,
+    links: [],
+    nextEvent: { id: 1, number: 1, title: "ONHOUSE 001" },
   },
   {
-    id: "artist-06",
-    num: "06",
+    id: 6,
     name: "TBA",
-    genre: { en: "TECH HOUSE", es: "TECH HOUSE" },
-    nextEvent: "ONHOUSE 001",
-    slot: "onh-artist-6",
+    genre: "TECH HOUSE",
+    description: null,
+    imageUrl: null,
+    links: [],
+    nextEvent: { id: 1, number: 1, title: "ONHOUSE 001" },
   },
 ];
