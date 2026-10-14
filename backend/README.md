@@ -94,7 +94,7 @@ See `.env.example` for all of them. The important ones:
 | `CLIENT_IP_HEADER` | Header carrying the real client IP behind a trusted proxy (`x-real-ip` on Vercel). |
 | `SESSION_IDLE_MINUTES`, `SESSION_ABSOLUTE_HOURS` | Session expiry (60 min idle / 12 h absolute). |
 | `LOGIN_*`, `RATE_LIMIT_PER_MINUTE`, `ADMIN_WRITE_LIMIT_PER_MINUTE` | Brute-force and rate limits. |
-| `STORAGE_BACKEND`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `BLOB_READ_WRITE_TOKEN`, `S3_*` | Where uploaded images go (section 7). |
+| `STORAGE_BACKEND`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `BLOB_STORE_ID`, `BLOB_READ_WRITE_TOKEN`, `S3_*` | Where uploaded images go (section 7). |
 | `EVENT_TIMEZONE` | Timezone for event dates (`Europe/Madrid`). |
 
 ## 5. API
@@ -163,8 +163,10 @@ Storage (`STORAGE_BACKEND`):
 | `s3` | Any S3-compatible bucket (Cloudflare R2, S3, B2) | `S3_PUBLIC_BASE_URL/uploads/<name>.webp` | Render free, or any host when you prefer your own bucket |
 
 Vercel Blob setup: backend project → *Storage* → *Create* → **Blob**, access
-**Public** → connect it to the project (this sets `BLOB_READ_WRITE_TOKEN`) →
-add `STORAGE_BACKEND=blob` → redeploy.
+**Public** → connect it to the project → add `STORAGE_BACKEND=blob` → redeploy.
+Connecting sets `BLOB_STORE_ID`: the API then authenticates with OIDC, using the
+short-lived token Vercel attaches to every request (nothing else to configure).
+Older stores set a static `BLOB_READ_WRITE_TOKEN` instead; either one is enough.
 
 Cloudflare R2 setup (free: 10 GB, no egress fees): create a bucket → enable
 public access (r2.dev URL or a custom domain such as `media.onhouse.es`) →

@@ -8,8 +8,9 @@ becomes part of a path.
 Three storage backends:
   local — files in UPLOAD_DIR, served by this API at /uploads/<name>.
           For development or a host with a persistent disk.
-  blob  — Vercel Blob (public store), authenticated with BLOB_READ_WRITE_TOKEN.
-          The simplest choice when the API runs on Vercel.
+  blob  — Vercel Blob (public store). Authenticated with OIDC (BLOB_STORE_ID
+          plus the per-request token Vercel issues) or, for older stores, a
+          static BLOB_READ_WRITE_TOKEN. The simplest choice on Vercel.
   s3    — any S3-compatible bucket (Cloudflare R2, AWS S3, Backblaze B2),
           served from S3_PUBLIC_BASE_URL.
 Vercel and Render free wipe the disk, so they need blob or s3.
@@ -18,6 +19,7 @@ Vercel and Render free wipe the disk, so they need blob or s3.
 import io
 import json
 import logging
+import os
 import re
 import secrets
 import urllib.error
@@ -40,7 +42,10 @@ UPLOAD_NAME = re.compile(r"^[a-f0-9]{32}\.webp$")
 
 # Vercel Blob REST API (the protocol used by Vercel's own SDKs).
 BLOB_API_URL = "https://vercel.com/api/blob/"
-BLOB_API_VERSION = "11"
+BLOB_API_VERSION = "13"  # what @vercel/blob sends today
+# Vercel issues the OIDC token per request (header), or in the env locally.
+OIDC_HEADER = "x-vercel-oidc-token"
+OIDC_ENV = "VERCEL_OIDC_TOKEN"
 
 logger = logging.getLogger("onhouse.uploads")
 
@@ -101,14 +106,29 @@ def _s3_client(settings: Settings):
     )
 
 
-def _blob_put(pathname: str, body: bytes, settings: Settings) -> str:
+def _blob_auth(settings: Settings, oidc_token: str | None) -> dict[str, str]:
+    """Same order as Vercel's SDK: OIDC + store id first, then the static token."""
+    oidc_token = (oidc_token or os.environ.get(OIDC_ENV, "")).strip()
+    if settings.blob_store_id and oidc_token:
+        return {
+            "authorization": f"Bearer {oidc_token}",
+            # The OIDC token doesn't name the store; the API wants the bare id.
+            "x-vercel-blob-store-id": settings.blob_store_id.removeprefix("store_"),
+        }
+    if settings.blob_read_write_token:
+        return {"authorization": f"Bearer {settings.blob_read_write_token}"}
+    logger.error("Vercel Blob: no OIDC token on the request and no BLOB_READ_WRITE_TOKEN")
+    raise AppError(502, "storage_unavailable", "Image storage is unavailable")
+
+
+def _blob_put(pathname: str, body: bytes, settings: Settings, oidc_token: str | None) -> str:
     """Upload to Vercel Blob; return the public URL it is served from."""
     request = urllib.request.Request(
         f"{BLOB_API_URL}?{urlencode({'pathname': pathname})}",
         data=body,
         method="PUT",
         headers={
-            "authorization": f"Bearer {settings.blob_read_write_token}",
+            **_blob_auth(settings, oidc_token),
             "x-api-version": BLOB_API_VERSION,
             "x-vercel-blob-access": "public",
             "x-content-type": "image/webp",
@@ -129,8 +149,16 @@ def _blob_put(pathname: str, body: bytes, settings: Settings) -> str:
     return url
 
 
-def store(data: bytes, settings: Settings, size: tuple[int, int] | None = None) -> str:
-    """Process and store an image; return the URL to save in the database."""
+def store(
+    data: bytes,
+    settings: Settings,
+    size: tuple[int, int] | None = None,
+    oidc_token: str | None = None,
+) -> str:
+    """Process and store an image; return the URL to save in the database.
+
+    `oidc_token` is the Vercel OIDC token of the current request (blob only).
+    """
     webp = process_image(data, size)
     name = _new_name()
 
@@ -146,7 +174,7 @@ def store(data: bytes, settings: Settings, size: tuple[int, int] | None = None) 
         return f"{settings.s3_public_base_url.rstrip('/')}/{key}"
 
     if settings.storage_backend == "blob":
-        return _blob_put(f"uploads/{name}", webp, settings)
+        return _blob_put(f"uploads/{name}", webp, settings, oidc_token)
 
     (upload_dir(settings) / name).write_bytes(webp)
     return f"/uploads/{name}"

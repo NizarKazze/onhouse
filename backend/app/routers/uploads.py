@@ -3,7 +3,7 @@
 import logging
 from typing import Literal
 
-from fastapi import APIRouter, Depends, File, Query, UploadFile, status
+from fastapi import APIRouter, Depends, File, Query, Request, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 
@@ -22,6 +22,7 @@ public_router = APIRouter(tags=["public"])
 
 @admin_router.post(UPLOAD_PATH, status_code=status.HTTP_201_CREATED)
 async def upload_image(
+    request: Request,
     file: UploadFile = File(...),
     # "event": posters are cropped to the site's fixed 1920x1080 frame.
     variant: Literal["free", "event"] = Query("free"),
@@ -45,6 +46,7 @@ async def upload_image(
         data,
         settings,
         upload_service.EVENT_SIZE if variant == "event" else None,
+        request.headers.get(upload_service.OIDC_HEADER),
     )
     logger.info("Admin %r uploaded %s", ctx.user.username, url)
     return {"url": url}

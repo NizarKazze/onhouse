@@ -172,26 +172,33 @@ def test_s3_backend(monkeypatch):
     assert calls[0]["Key"] == url.removeprefix("https://media.onhouse.es/")
 
 
-def test_blob_backend(monkeypatch):
-    settings = get_settings().model_copy(
-        update={"storage_backend": "blob", "blob_read_write_token": "vercel_blob_rw_test"}
-    )
+class _FakeResponse(io.BytesIO):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
+
+def _fake_blob(monkeypatch) -> list:
     calls = []
-
-    class FakeResponse(io.BytesIO):
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_):
-            return False
 
     def fake_urlopen(request, timeout):
         calls.append(request)
         pathname = request.full_url.split("pathname=", 1)[1].replace("%2F", "/")
         url = f"https://store.public.blob.vercel-storage.com/{pathname}"
-        return FakeResponse(json.dumps({"url": url, "pathname": pathname}).encode())
+        return _FakeResponse(json.dumps({"url": url, "pathname": pathname}).encode())
 
     monkeypatch.setattr(upload_service.urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.delenv(upload_service.OIDC_ENV, raising=False)
+    return calls
+
+
+def test_blob_backend(monkeypatch):
+    settings = get_settings().model_copy(
+        update={"storage_backend": "blob", "blob_read_write_token": "vercel_blob_rw_test"}
+    )
+    calls = _fake_blob(monkeypatch)
     url = upload_service.store(_image_bytes(), settings)
 
     assert url.startswith("https://store.public.blob.vercel-storage.com/uploads/")
@@ -199,8 +206,58 @@ def test_blob_backend(monkeypatch):
     request = calls[0]
     assert request.get_method() == "PUT"
     assert request.headers["Authorization"] == "Bearer vercel_blob_rw_test"
+    assert "X-vercel-blob-store-id" not in request.headers
     assert request.headers["X-vercel-blob-access"] == "public"
     assert request.headers["X-content-type"] == "image/webp"
+
+
+def test_blob_backend_with_oidc(monkeypatch):
+    settings = get_settings().model_copy(
+        update={
+            "storage_backend": "blob",
+            "blob_store_id": "store_AbC123",
+            "blob_read_write_token": "vercel_blob_rw_fallback",
+        }
+    )
+    calls = _fake_blob(monkeypatch)
+    upload_service.store(_image_bytes(), settings, oidc_token="oidc-from-request")
+
+    # OIDC wins over the static token, like Vercel's own SDK.
+    assert calls[0].headers["Authorization"] == "Bearer oidc-from-request"
+    assert calls[0].headers["X-vercel-blob-store-id"] == "AbC123"
+
+
+def test_blob_oidc_token_reaches_the_upload_from_the_request(admin, monkeypatch):
+    settings = get_settings().model_copy(
+        update={"storage_backend": "blob", "blob_store_id": "store_AbC123"}
+    )
+    admin.client.app.dependency_overrides[get_settings] = lambda: settings
+    calls = _fake_blob(monkeypatch)
+    try:
+        response = admin.client.post(
+            URL,
+            files={"file": ("p.png", _image_bytes(), "image/png")},
+            headers={
+                "X-CSRF-Token": admin.csrf,
+                "Origin": ORIGIN,
+                upload_service.OIDC_HEADER: "oidc-from-vercel",
+            },
+        )
+    finally:
+        admin.client.app.dependency_overrides.pop(get_settings, None)
+    assert response.status_code == 201
+    assert calls[0].headers["Authorization"] == "Bearer oidc-from-vercel"
+
+
+def test_blob_store_id_without_oidc_token_is_a_clean_502(monkeypatch):
+    settings = get_settings().model_copy(
+        update={"storage_backend": "blob", "blob_store_id": "store_AbC123"}
+    )
+    calls = _fake_blob(monkeypatch)
+    with pytest.raises(AppError) as exc:
+        upload_service.store(_image_bytes(), settings)
+    assert exc.value.status_code == 502 and exc.value.code == "storage_unavailable"
+    assert calls == []
 
 
 def test_blob_backend_failure_is_a_clean_502(monkeypatch):
@@ -220,6 +277,12 @@ def test_blob_backend_failure_is_a_clean_502(monkeypatch):
         raise AssertionError("expected AppError")
 
 
-def test_blob_backend_requires_token():
-    with pytest.raises(ValueError, match="BLOB_READ_WRITE_TOKEN"):
+def test_blob_backend_requires_credentials():
+    with pytest.raises(ValueError, match="BLOB_STORE_ID or BLOB_READ_WRITE_TOKEN"):
         Settings(_env_file=None, STORAGE_BACKEND="blob")
+
+
+def test_blob_store_id_alone_is_enough_to_start():
+    # What Vercel's Blob integration sets today: no static token at all.
+    settings = Settings(_env_file=None, STORAGE_BACKEND="blob", BLOB_STORE_ID="store_AbC123")
+    assert settings.blob_store_id == "store_AbC123"
