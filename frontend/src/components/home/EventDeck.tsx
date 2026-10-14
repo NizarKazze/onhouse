@@ -23,7 +23,7 @@ export function EventDeck({ events }: { events: Event[] }) {
 
   if (count === 0) {
     return (
-      <section id="upcoming" className="onh-gutter-x pb-[clamp(64px,9vw,150px)]">
+      <section id="upcoming" className="onh-gutter-x overflow-x-clip pb-[clamp(64px,9vw,150px)]">
         <div className="onh-shell">
           <div className="onh-rule-head mb-[clamp(28px,4vw,52px)]">
             <h2 className="m-0 text-[clamp(11px,1.1vw,13px)] font-semibold tracking-[0.34em] text-[rgba(242,240,238,.6)]">
@@ -47,7 +47,7 @@ export function EventDeck({ events }: { events: Event[] }) {
   }vh)`;
 
   return (
-    <section id="upcoming" className="onh-gutter-x pb-[clamp(64px,9vw,150px)]">
+    <section id="upcoming" className="onh-gutter-x overflow-x-clip pb-[clamp(64px,9vw,150px)]">
       <div className="onh-shell">
         <Reveal className="onh-rule-head mb-[clamp(28px,4vw,52px)]">
           <h2 className="m-0 text-[clamp(11px,1.1vw,13px)] font-semibold tracking-[0.34em] text-[rgba(242,240,238,.6)]">

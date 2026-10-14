@@ -68,7 +68,7 @@ export function SiteHeader() {
         )}
 
         <div
-          className={`flex flex-none items-center gap-[14px] max-[480px]:gap-[2.4vw] ${narrow ? "ml-auto" : ""}`}
+          className={`flex flex-none items-center gap-[14px] max-[480px]:gap-[2.4vw] ${narrow ? "ml-auto min-w-0" : ""}`}
         >
           <button
             type="button"
@@ -92,19 +92,22 @@ export function SiteHeader() {
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls="onh-mobile-menu"
-              className="grid cursor-pointer justify-items-end border-none bg-transparent py-[8px] font-sans text-[11px] font-semibold tracking-[0.18em] text-onh-bone max-[480px]:text-[clamp(9.5px,2.8vw,11px)] max-[480px]:tracking-[0.12em]"
+              aria-label={menuOpen ? t.close : t.menu}
+              className="relative -mr-[8px] flex size-[40px] flex-none cursor-pointer items-center justify-center border-none bg-transparent p-0 text-onh-bone"
             >
-              {/* Both labels share one cell, so the button is always as wide
-                  as the longer one and toggling never shifts the row. */}
-              <span
-                className={`[grid-area:1/1] ${menuOpen ? "invisible" : ""}`}
-              >
-                {t.menu}
-              </span>
-              <span
-                className={`[grid-area:1/1] ${menuOpen ? "" : "invisible"}`}
-              >
-                {t.close}
+              {/* Hamburger: three bars that fold into an X when open. Fixed
+                  size, so toggling never shifts the row. */}
+              <span aria-hidden="true" className="relative block h-[14px] w-[22px]">
+                {[
+                  menuOpen ? "top-[6px] rotate-45" : "top-0",
+                  menuOpen ? "top-[6px] opacity-0" : "top-[6px]",
+                  menuOpen ? "top-[6px] -rotate-45" : "top-[12px]",
+                ].map((state, index) => (
+                  <span
+                    key={index}
+                    className={`absolute left-0 block h-[2px] w-full bg-current transition-[top,rotate,opacity] duration-300 ease-[var(--onh-ease)] ${state}`}
+                  />
+                ))}
               </span>
             </button>
           )}

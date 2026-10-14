@@ -63,6 +63,9 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Mobile Chrome still pans sideways with only body { overflow-x: hidden };
+       clip (unlike hidden) also keeps position: sticky working. */
+    overflow-x: clip;
   }
 
   body {
