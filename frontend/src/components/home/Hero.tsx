@@ -23,12 +23,6 @@ export function Hero() {
 
       <div className="onh-gutter-x pointer-events-none absolute inset-0 flex flex-col justify-end pb-[clamp(40px,6vw,78px)]">
         <div className="onh-shell w-full">
-          <div className="mb-[clamp(18px,3vw,30px)] flex items-center gap-[12px]">
-            <span className="h-[7px] w-[7px] animate-[onh-blink_2.4s_ease-in-out_infinite] rounded-full bg-onh-bone" />
-            <span className="text-[10.5px] font-semibold tracking-[0.32em] text-[rgba(242,240,238,.7)]">
-              IBIZA · {t.heroKicker}
-            </span>
-          </div>
 
           <h1
             className="m-0 max-w-[16ch] text-[clamp(52px,11.5vw,196px)] max-[600px]:text-[clamp(40px,13.5vw,64px)] leading-[0.86] font-black tracking-[-0.02em] uppercase"

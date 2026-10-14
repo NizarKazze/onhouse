@@ -1,9 +1,11 @@
 import io
+import json
 
 import pytest
 from PIL import Image
 
-from app.config import get_settings
+from app.config import Settings, get_settings
+from app.errors import AppError
 from app.services import uploads as upload_service
 from tests.conftest import ORIGIN, artist_payload
 
@@ -68,6 +70,27 @@ def test_large_images_are_downscaled(admin, client):
     url = _upload(admin, _image_bytes("PNG", size=(4000, 1000))).json()["url"]
     image = Image.open(io.BytesIO(client.get(url).content))
     assert max(image.size) == upload_service.MAX_SIDE
+
+
+@pytest.mark.parametrize("size", [(4000, 1000), (800, 1200), (1920, 1080), (64, 48)])
+def test_event_images_are_cropped_to_1920x1080(admin, client, size):
+    response = admin.client.post(
+        f"{URL}?variant=event",
+        files={"file": ("p.png", _image_bytes("PNG", size=size), "image/png")},
+        headers={"X-CSRF-Token": admin.csrf, "Origin": ORIGIN},
+    )
+    assert response.status_code == 201
+    image = Image.open(io.BytesIO(client.get(response.json()["url"]).content))
+    assert image.size == upload_service.EVENT_SIZE
+
+
+def test_unknown_variant_is_rejected(admin):
+    response = admin.client.post(
+        f"{URL}?variant=huge",
+        files={"file": ("p.png", _image_bytes(), "image/png")},
+        headers={"X-CSRF-Token": admin.csrf, "Origin": ORIGIN},
+    )
+    assert response.status_code == 422
 
 
 @pytest.mark.parametrize(
@@ -147,3 +170,56 @@ def test_s3_backend(monkeypatch):
     assert calls[0]["Bucket"] == "media"
     assert calls[0]["ContentType"] == "image/webp"
     assert calls[0]["Key"] == url.removeprefix("https://media.onhouse.es/")
+
+
+def test_blob_backend(monkeypatch):
+    settings = get_settings().model_copy(
+        update={"storage_backend": "blob", "blob_read_write_token": "vercel_blob_rw_test"}
+    )
+    calls = []
+
+    class FakeResponse(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return False
+
+    def fake_urlopen(request, timeout):
+        calls.append(request)
+        pathname = request.full_url.split("pathname=", 1)[1].replace("%2F", "/")
+        url = f"https://store.public.blob.vercel-storage.com/{pathname}"
+        return FakeResponse(json.dumps({"url": url, "pathname": pathname}).encode())
+
+    monkeypatch.setattr(upload_service.urllib.request, "urlopen", fake_urlopen)
+    url = upload_service.store(_image_bytes(), settings)
+
+    assert url.startswith("https://store.public.blob.vercel-storage.com/uploads/")
+    assert url.endswith(".webp")
+    request = calls[0]
+    assert request.get_method() == "PUT"
+    assert request.headers["Authorization"] == "Bearer vercel_blob_rw_test"
+    assert request.headers["X-vercel-blob-access"] == "public"
+    assert request.headers["X-content-type"] == "image/webp"
+
+
+def test_blob_backend_failure_is_a_clean_502(monkeypatch):
+    settings = get_settings().model_copy(
+        update={"storage_backend": "blob", "blob_read_write_token": "vercel_blob_rw_test"}
+    )
+
+    def broken_urlopen(request, timeout):
+        raise upload_service.urllib.error.URLError("unreachable")
+
+    monkeypatch.setattr(upload_service.urllib.request, "urlopen", broken_urlopen)
+    try:
+        upload_service.store(_image_bytes(), settings)
+    except AppError as exc:
+        assert exc.status_code == 502 and exc.code == "storage_unavailable"
+    else:
+        raise AssertionError("expected AppError")
+
+
+def test_blob_backend_requires_token():
+    with pytest.raises(ValueError, match="BLOB_READ_WRITE_TOKEN"):
+        Settings(_env_file=None, STORAGE_BACKEND="blob")

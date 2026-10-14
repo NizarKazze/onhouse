@@ -103,6 +103,7 @@ const MESSAGES: Record<string, string> = {
   conflict: "Ya existe un elemento con esos datos.",
   validation_error: "Revisa los campos marcados.",
   payload_too_large: "El archivo o el contenido es demasiado grande.",
+  storage_unavailable: "No se pudo guardar la imagen. Inténtalo de nuevo o usa una URL.",
   internal_error: "Error del servidor. Inténtalo de nuevo.",
 };
 
@@ -184,11 +185,18 @@ export const adminApi = {
     request<AdminEvent>("PUT", `/admin/events/${id}`, data),
   deleteEvent: (id: number) => request<void>("DELETE", `/admin/events/${id}`),
 
-  /** Uploads an image; the server re-encodes it and returns the URL to save. */
-  async uploadImage(file: Blob, filename: string): Promise<string> {
+  /**
+   * Uploads an image; the server re-encodes it and returns the URL to save.
+   * "event" images are centre-cropped to exactly 1920x1080.
+   */
+  async uploadImage(file: Blob, filename: string, variant: "free" | "event" = "free"): Promise<string> {
     const form = new FormData();
     form.append("file", file, filename);
-    const { url } = await request<{ url: string }>("POST", "/admin/uploads", form);
+    const { url } = await request<{ url: string }>(
+      "POST",
+      `/admin/uploads?variant=${variant}`,
+      form,
+    );
     return url;
   },
 };

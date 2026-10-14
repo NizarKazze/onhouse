@@ -112,7 +112,7 @@ function EventCard({ event }: { event: Event }) {
 
   return (
     <article className="flex flex-col border border-[var(--onh-line)] bg-onh-black transition-colors duration-300 hover:border-[rgba(242,240,238,.4)]">
-      <div className="relative overflow-hidden bg-onh-panel [aspect-ratio:4/3]">
+      <div className="relative overflow-hidden bg-onh-panel [aspect-ratio:16/9]">
         <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
           <ImageSlot
             src={event.image}

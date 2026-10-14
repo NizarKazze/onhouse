@@ -34,8 +34,10 @@ function ExperienceDesktop() {
             {t.pillars.map((pillar, index) => (
               <div key={pillar.num} className="min-w-0" style={{ borderColor: "rgba(10,10,10,.4)" }}>
 
+                {/* Height follows the numeral (ink ≈ 1.59em once stretched by
+                    scaleY 2.1) so it is only ever cropped on the right. */}
                 <div
-                  className="relative mt-[clamp(20px,3vw,52px)] h-[clamp(330px,40vw,660px)] overflow-hidden"
+                  className="relative mt-[clamp(20px,3vw,52px)] h-[calc(var(--onh-exp-num)*1.68)] overflow-hidden [--onh-exp-num:clamp(200px,24vw,440px)]"
                   aria-hidden="true"
                 >
                   <div className="absolute inset-0 flex items-end justify-center translate-x-[clamp(35px,5vw,80px)]">
@@ -45,8 +47,9 @@ function ExperienceDesktop() {
                       className="leading-[0]"
                     >
                       <span
-                        className="inline-block text-[clamp(200px,24vw,440px)] leading-[0.78] font-black tracking-[-0.07em]"
+                        className="inline-block leading-[0.78] font-black tracking-[-0.07em]"
                         style={{
+                          fontSize: "var(--onh-exp-num)",
                           transform: "scaleY(2.1) scaleX(1.1)",
                           transformOrigin: "bottom center",
                         }}

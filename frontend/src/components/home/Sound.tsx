@@ -1,5 +1,6 @@
 "use client";
 
+import { ImageSlot } from "@/components/ui/ImageSlot";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
@@ -20,12 +21,10 @@ export function Sound() {
           HOUSE
         </Reveal>
 
-        {/* Outlined, not filled — the middle line is drawn with a text stroke. */}
         <Reveal
           duration={1}
           delay={0.08}
-          className="text-left text-[clamp(34px,9.1vw,160px)] leading-[1.12] font-black tracking-normal whitespace-nowrap text-transparent uppercase"
-          style={{ WebkitTextStroke: "1.4px rgba(242,240,238,.78)" }}
+          className="text-left text-[clamp(34px,9.1vw,160px)] leading-[1.12] font-black tracking-normal whitespace-nowrap text-[rgba(242,240,238,.42)] uppercase"
         >
           DEEP HOUSE
         </Reveal>
@@ -39,9 +38,16 @@ export function Sound() {
         </Reveal>
 
         <Reveal
+          delay={0.18}
+          className="relative mt-[clamp(34px,5vw,72px)] mr-0 ml-auto aspect-[3/2] w-full max-w-[min(100%,560px)] overflow-hidden grayscale contrast-[1.1]"
+        >
+          <ImageSlot id="onh-sound" sizes="(max-width: 900px) 100vw, 560px" />
+        </Reveal>
+
+        <Reveal
           as="p"
           delay={0.2}
-          className="mt-[clamp(34px,5vw,72px)] mr-0 mb-0 ml-auto max-w-[44ch] text-[clamp(15px,1.25vw,19px)] leading-[1.62] text-[rgba(242,240,238,.72)]"
+          className="mt-[clamp(20px,2.4vw,34px)] mr-0 mb-0 ml-auto w-full max-w-[min(100%,560px)] text-[clamp(15px,1.25vw,19px)] leading-[1.62] text-[rgba(242,240,238,.72)]"
           style={{ textWrap: "pretty" }}
         >
           {t.soundBody}

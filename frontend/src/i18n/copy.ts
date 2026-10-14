@@ -68,6 +68,8 @@ export type Dictionary = {
   general: string;
   phone: string;
   founder: string;
+  promoter: string;
+  promoterBody: string;
   eventsIntro: string;
   archive: string;
   archiveTitle: string;
@@ -178,6 +180,8 @@ export const copy: Record<Locale, Dictionary> = {
     general: "GENERAL",
     phone: "PHONE",
     founder: "FOUNDER / PROMOTER",
+    promoter: "PROMOTER",
+    promoterBody: "AURO — festival and theatre management",
     eventsIntro:
       "An editorial record of ONHOUSE nights. Upcoming dates first, then the archive.",
     archive: "ARCHIVE",
@@ -288,6 +292,8 @@ export const copy: Record<Locale, Dictionary> = {
     general: "GENERAL",
     phone: "TELÉFONO",
     founder: "FUNDADOR / PROMOTOR",
+    promoter: "PROMOTOR",
+    promoterBody: "AURO — gestión de festivales y teatros",
     eventsIntro:
       "Un registro editorial de las noches ONHOUSE. Primero las fechas próximas, después el archivo.",
     archive: "ARCHIVO",
@@ -321,7 +327,7 @@ export const copy: Record<Locale, Dictionary> = {
 /** Contact details, identical in both languages. */
 export const contactDetails = {
   bookingsEmail: "bartolome.munoz@onhouse.es",
-  generalEmail: "Info@onhouse.es",
+  generalEmail: "Marvicol2010@hotmail.com",
   phone: "+34 691 88 06 71",
   phoneHref: "tel:+34691880671",
   instagram: "@onhouseofficial",

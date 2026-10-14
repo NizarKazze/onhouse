@@ -49,7 +49,18 @@ export const imageSlots: Record<string, Slot> = {
     caption: "Documentary crowd or booth photograph",
     alt: "ONHOUSE crowd photographed from the booth",
   },
+  "onh-sound": {
+    src: "/images/ONHOUSE_6.webp",
+    caption: "Booth photograph — hands on the decks",
+    alt: "A DJ working the decks in the ONHOUSE booth, black and white",
+  },
+  "onh-promoter-logo": {
+    src: "/images/aurologo.jpeg",
+    caption: "AURO logo",
+    alt: "AURO logo",
+  },
   "onh-culture": {
+    src: "/images/ONHOUSE_8.webp",
     caption: "Dancefloor photograph — hands, crowd, darkness",
     alt: "Hands raised on a dark dancefloor",
   },
@@ -61,8 +72,8 @@ export const imageSlots: Record<string, Slot> = {
   "onh-artist-5": { caption: "Artist portrait", alt: "Artist portrait" },
   "onh-artist-6": { caption: "Artist portrait", alt: "Artist portrait" },
 
-  "onh-ibiza-1": { caption: "Night architecture", alt: "Ibiza night architecture" },
-  "onh-ibiza-2": { caption: "Sound system / booth detail", alt: "Sound system detail" },
+  "onh-ibiza-1": { src: "/images/cbe25965-c8e4-4c25-ba69-c19cf338d0a0.jpg", caption: "Night architecture", alt: "Ibiza night architecture" },
+  "onh-ibiza-2": { src: "/images/Foto 15-4-25, 23 05 10 (2).jpg", caption: "Sound system / booth detail", alt: "Sound system detail" },
 
   "onh-ev-001": {
     caption: "ONHOUSE 001 key visual",
@@ -78,9 +89,12 @@ export const imageSlots: Record<string, Slot> = {
   "onh-vctr-4": { src: "/images/ONHOUSE_10.webp", caption: "VCTR — room", alt: "The room during a VCTR set" },
 
   "onh-footer": {
+    src: "/images/ONHOUSE_10.webp",
     caption: "Footer background — wide, dark dancefloor or booth photograph",
     alt: "A dark, wide dancefloor",
   },
+
+  
 };
 
 export function getSlot(id: string): Slot | undefined {

@@ -1,8 +1,9 @@
 """Image upload (admin) and serving of locally stored uploads (public)."""
 
 import logging
+from typing import Literal
 
-from fastapi import APIRouter, Depends, File, UploadFile, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 
@@ -22,6 +23,8 @@ public_router = APIRouter(tags=["public"])
 @admin_router.post(UPLOAD_PATH, status_code=status.HTTP_201_CREATED)
 async def upload_image(
     file: UploadFile = File(...),
+    # "event": posters are cropped to the site's fixed 1920x1080 frame.
+    variant: Literal["free", "event"] = Query("free"),
     settings: Settings = Depends(get_settings),
     ctx: AdminContext = Depends(require_admin),
 ) -> dict:
@@ -37,7 +40,12 @@ async def upload_image(
                        [{"field": "file", "message": "empty file", "type": "value_error"}])
 
     # Decoding/encoding is CPU-bound: keep it off the event loop.
-    url = await run_in_threadpool(upload_service.store, data, settings)
+    url = await run_in_threadpool(
+        upload_service.store,
+        data,
+        settings,
+        upload_service.EVENT_SIZE if variant == "event" else None,
+    )
     logger.info("Admin %r uploaded %s", ctx.user.username, url)
     return {"url": url}
 

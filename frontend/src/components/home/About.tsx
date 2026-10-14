@@ -19,11 +19,11 @@ function AboutDesktop() {
     <section id="about" className="bg-onh-bone text-onh-black">
       <div
         className="onh-shell grid"
-        style={{ gridTemplateColumns: "minmax(0,.82fr) minmax(0,1.18fr)" }}
+        style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)" }}
       >
         <div className="relative min-h-[clamp(340px,50vw,720px)]">
           <div className="absolute inset-0 grayscale contrast-[1.1]">
-            <ImageSlot id="onh-about" sizes="(max-width: 900px) 100vw, 40vw" />
+            <ImageSlot id="onh-about" sizes="(max-width: 900px) 100vw, 50vw" />
           </div>
         </div>
 

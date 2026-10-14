@@ -1,5 +1,6 @@
 "use client";
 
+import { ImageSlot } from "@/components/ui/ImageSlot";
 import { contactDetails } from "@/i18n/copy";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useNarrow } from "@/lib/hooks";
@@ -50,15 +51,6 @@ export function Contact() {
           </div>
 
           <div className="flex flex-col gap-[26px]">
-            <DetailRow label={t.bookings}>
-              <a
-                href={`mailto:${contactDetails.bookingsEmail}`}
-                className={`onh-link ${VALUE}`}
-              >
-                {contactDetails.bookingsEmail}
-              </a>
-            </DetailRow>
-
             <DetailRow label={t.general}>
               <a
                 href={`mailto:${contactDetails.generalEmail}`}
@@ -87,6 +79,15 @@ export function Contact() {
 
             <DetailRow label={t.founder}>
               <div className={VALUE}>{contactDetails.founder}</div>
+            </DetailRow>
+
+            <DetailRow label={t.promoter}>
+              <div className="flex items-center gap-[clamp(14px,1.6vw,22px)]">
+                <div className="relative size-[clamp(64px,6vw,88px)] flex-none overflow-hidden">
+                  <ImageSlot id="onh-promoter-logo" sizes="88px" />
+                </div>
+                <div className={VALUE}>{t.promoterBody}</div>
+              </div>
             </DetailRow>
           </div>
         </div>

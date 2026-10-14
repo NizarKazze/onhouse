@@ -5,18 +5,25 @@ an image, strips metadata (EXIF, GPS), caps the resolution and neutralises
 polyglot files. The stored name is random, so nothing the client sends ever
 becomes part of a path.
 
-Two storage backends:
+Three storage backends:
   local — files in UPLOAD_DIR, served by this API at /uploads/<name>.
           For development or a host with a persistent disk.
+  blob  — Vercel Blob (public store), authenticated with BLOB_READ_WRITE_TOKEN.
+          The simplest choice when the API runs on Vercel.
   s3    — any S3-compatible bucket (Cloudflare R2, AWS S3, Backblaze B2),
-          served from S3_PUBLIC_BASE_URL. Required on hosts whose disk is
-          wiped on every deploy (Vercel, Render free).
+          served from S3_PUBLIC_BASE_URL.
+Vercel and Render free wipe the disk, so they need blob or s3.
 """
 
 import io
+import json
+import logging
 import re
 import secrets
+import urllib.error
+import urllib.request
 from pathlib import Path
+from urllib.parse import urlencode
 
 from PIL import Image, ImageOps, UnidentifiedImageError
 
@@ -25,8 +32,17 @@ from app.errors import AppError
 
 ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP", "AVIF"}
 MAX_SIDE = 2560  # px, longest side after re-encoding
+# Event photos are always stored at exactly this size (16:9), centre-cropped,
+# so every frame on the site shows the same picture.
+EVENT_SIZE = (1920, 1080)
 WEBP_QUALITY = 85
 UPLOAD_NAME = re.compile(r"^[a-f0-9]{32}\.webp$")
+
+# Vercel Blob REST API (the protocol used by Vercel's own SDKs).
+BLOB_API_URL = "https://vercel.com/api/blob/"
+BLOB_API_VERSION = "11"
+
+logger = logging.getLogger("onhouse.uploads")
 
 # Refuse decompression bombs outright (Pillow only warns by default).
 Image.MAX_IMAGE_PIXELS = 60_000_000
@@ -38,7 +54,8 @@ def _invalid(message: str) -> AppError:
     )
 
 
-def process_image(data: bytes) -> bytes:
+def process_image(data: bytes, size: tuple[int, int] | None = None) -> bytes:
+    """Re-encode to WebP. With `size`, centre-crop and scale to exactly that."""
     try:
         with Image.open(io.BytesIO(data)) as probe:
             if probe.format not in ALLOWED_FORMATS:
@@ -49,7 +66,10 @@ def process_image(data: bytes) -> bytes:
             image = ImageOps.exif_transpose(image)  # honour phone rotation, then drop EXIF
             if image.mode not in ("RGB", "RGBA"):
                 image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
-            image.thumbnail((MAX_SIDE, MAX_SIDE))
+            if size:
+                image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+            else:
+                image.thumbnail((MAX_SIDE, MAX_SIDE))
             out = io.BytesIO()
             image.save(out, format="WEBP", quality=WEBP_QUALITY, method=4)
             return out.getvalue()
@@ -81,9 +101,37 @@ def _s3_client(settings: Settings):
     )
 
 
-def store(data: bytes, settings: Settings) -> str:
+def _blob_put(pathname: str, body: bytes, settings: Settings) -> str:
+    """Upload to Vercel Blob; return the public URL it is served from."""
+    request = urllib.request.Request(
+        f"{BLOB_API_URL}?{urlencode({'pathname': pathname})}",
+        data=body,
+        method="PUT",
+        headers={
+            "authorization": f"Bearer {settings.blob_read_write_token}",
+            "x-api-version": BLOB_API_VERSION,
+            "x-vercel-blob-access": "public",
+            "x-content-type": "image/webp",
+            "x-add-random-suffix": "0",
+            "x-allow-overwrite": "0",
+            "x-cache-control-max-age": "31536000",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            url = json.load(response)["url"]
+    except (urllib.error.URLError, KeyError, ValueError) as exc:
+        detail = exc.read()[:300] if isinstance(exc, urllib.error.HTTPError) else exc
+        logger.error("Vercel Blob upload failed: %s", detail)
+        raise AppError(502, "storage_unavailable", "Image storage is unavailable") from exc
+    if not url.startswith("https://"):
+        raise AppError(502, "storage_unavailable", "Image storage is unavailable")
+    return url
+
+
+def store(data: bytes, settings: Settings, size: tuple[int, int] | None = None) -> str:
     """Process and store an image; return the URL to save in the database."""
-    webp = process_image(data)
+    webp = process_image(data, size)
     name = _new_name()
 
     if settings.storage_backend == "s3":
@@ -96,6 +144,9 @@ def store(data: bytes, settings: Settings) -> str:
             CacheControl="public, max-age=31536000, immutable",
         )
         return f"{settings.s3_public_base_url.rstrip('/')}/{key}"
+
+    if settings.storage_backend == "blob":
+        return _blob_put(f"uploads/{name}", webp, settings)
 
     (upload_dir(settings) / name).write_bytes(webp)
     return f"/uploads/{name}"

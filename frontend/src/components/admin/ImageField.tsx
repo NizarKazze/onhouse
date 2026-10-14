@@ -16,10 +16,17 @@ const STEPS: [number, number][] = [
 ];
 const ACCEPT = "image/jpeg,image/png,image/webp,image/avif";
 
+/** Event photos: the server crops them to exactly this size. */
+const EVENT_SIZE: [number, number] = [1920, 1080];
+
 class TooLargeError extends Error {}
 
-/** Downscale/re-encode in steps until the image fits under the upload limit. */
-async function shrink(file: File): Promise<Blob> {
+/**
+ * Downscale/re-encode in steps until the image fits under the upload limit.
+ * With `cover`, the image is centre-cropped to that exact size instead, so the
+ * server never has to upscale a photo the browser already shrank.
+ */
+async function shrink(file: File, cover?: [number, number]): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
@@ -28,10 +35,30 @@ async function shrink(file: File): Promise<Blob> {
 
   try {
     for (const [side, quality] of STEPS) {
-      const scale = Math.min(1, side / Math.max(bitmap.width, bitmap.height));
-      canvas.width = Math.round(bitmap.width * scale);
-      canvas.height = Math.round(bitmap.height * scale);
-      context?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      if (cover) {
+        const [w, h] = cover;
+        const scale = Math.max(w / bitmap.width, h / bitmap.height);
+        const sw = w / scale;
+        const sh = h / scale;
+        canvas.width = w;
+        canvas.height = h;
+        context?.drawImage(
+          bitmap,
+          (bitmap.width - sw) / 2,
+          (bitmap.height - sh) / 2,
+          sw,
+          sh,
+          0,
+          0,
+          w,
+          h,
+        );
+      } else {
+        const scale = Math.min(1, side / Math.max(bitmap.width, bitmap.height));
+        canvas.width = Math.round(bitmap.width * scale);
+        canvas.height = Math.round(bitmap.height * scale);
+        context?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      }
       // Some browsers can't encode WebP; the server re-encodes anyway.
       const blob = (await encode("image/webp", quality)) ?? (await encode("image/jpeg", quality));
       if (blob && blob.size <= DIRECT_UPLOAD_LIMIT) return blob;
@@ -51,12 +78,16 @@ export function ImageField({
   value,
   onChange,
   error,
+  variant = "free",
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
   error?: string;
+  /** "event": cropped to 1920x1080 on upload, previewed at 16:9. */
+  variant?: "free" | "event";
 }) {
+  const isEvent = variant === "event";
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -72,8 +103,11 @@ export function ImageField({
     }
     setUploading(true);
     try {
-      const body = file.size > DIRECT_UPLOAD_LIMIT ? await shrink(file) : file;
-      onChange(await adminApi.uploadImage(body, file.name));
+      const body =
+        file.size > DIRECT_UPLOAD_LIMIT
+          ? await shrink(file, isEvent ? EVENT_SIZE : undefined)
+          : file;
+      onChange(await adminApi.uploadImage(body, file.name, variant));
     } catch (err) {
       setUploadError(
         err instanceof TooLargeError
@@ -99,7 +133,7 @@ export function ImageField({
       </span>
 
       <div className="flex flex-wrap items-start gap-4">
-        <div className="relative flex h-[120px] w-[96px] shrink-0 items-center justify-center overflow-hidden border border-[var(--onh-line)] bg-onh-panel">
+        <div className={`relative flex ${isEvent ? "h-[90px] w-[160px]" : "h-[120px] w-[96px]"} shrink-0 items-center justify-center overflow-hidden border border-[var(--onh-line)] bg-onh-panel`}>
           {value ? (
             // Plain <img>: an admin preview of an arbitrary URL, not site imagery.
             // eslint-disable-next-line @next/next/no-img-element
@@ -136,7 +170,9 @@ export function ImageField({
             )}
           </div>
           <p className="m-0 text-[12px] text-[rgba(242,240,238,.45)]">
-            JPG, PNG, WebP o AVIF. Las fotos grandes se reducen automáticamente.
+            {isEvent
+              ? "JPG, PNG, WebP o AVIF. Se recorta al centro y se guarda a 1920x1080 (16:9)."
+              : "JPG, PNG, WebP o AVIF. Las fotos grandes se reducen automáticamente."}
           </p>
           <button
             type="button"

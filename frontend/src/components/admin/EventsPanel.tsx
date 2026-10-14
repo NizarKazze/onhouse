@@ -402,6 +402,7 @@ function EventForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <ImageField
           label="Póster"
+          variant="event"
           value={imageUrl}
           onChange={setImageUrl}
           error={fieldErrors.imageUrl}

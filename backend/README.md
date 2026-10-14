@@ -94,7 +94,7 @@ See `.env.example` for all of them. The important ones:
 | `CLIENT_IP_HEADER` | Header carrying the real client IP behind a trusted proxy (`x-real-ip` on Vercel). |
 | `SESSION_IDLE_MINUTES`, `SESSION_ABSOLUTE_HOURS` | Session expiry (60 min idle / 12 h absolute). |
 | `LOGIN_*`, `RATE_LIMIT_PER_MINUTE`, `ADMIN_WRITE_LIMIT_PER_MINUTE` | Brute-force and rate limits. |
-| `STORAGE_BACKEND`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `S3_*` | Where uploaded images go (section 7). |
+| `STORAGE_BACKEND`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `BLOB_READ_WRITE_TOKEN`, `S3_*` | Where uploaded images go (section 7). |
 | `EVENT_TIMEZONE` | Timezone for event dates (`Europe/Madrid`). |
 
 ## 5. API
@@ -159,7 +159,12 @@ Storage (`STORAGE_BACKEND`):
 | Backend | Where | URL saved | Use when |
 |---|---|---|---|
 | `local` (default) | `backend/uploads/` (git-ignored) | `/uploads/<name>.webp`, served by the API and proxied by the site | Local development, or a server with a persistent disk |
-| `s3` | Any S3-compatible bucket (Cloudflare R2, S3, B2) | `S3_PUBLIC_BASE_URL/uploads/<name>.webp` | **Vercel / Render free** — their disk is wiped on every deploy, so a local folder would lose the images |
+| `blob` | Vercel Blob (public store) | `https://<store>.public.blob.vercel-storage.com/uploads/<name>.webp` | **Vercel** — the disk there is read-only and wiped on every deploy |
+| `s3` | Any S3-compatible bucket (Cloudflare R2, S3, B2) | `S3_PUBLIC_BASE_URL/uploads/<name>.webp` | Render free, or any host when you prefer your own bucket |
+
+Vercel Blob setup: backend project → *Storage* → *Create* → **Blob**, access
+**Public** → connect it to the project (this sets `BLOB_READ_WRITE_TOKEN`) →
+add `STORAGE_BACKEND=blob` → redeploy.
 
 Cloudflare R2 setup (free: 10 GB, no egress fees): create a bucket → enable
 public access (r2.dev URL or a custom domain such as `media.onhouse.es`) →
@@ -181,7 +186,7 @@ Not yet done: deleting the old file when an image is replaced or its event/artis
    `SECRET_KEY`, `DATABASE_URL` (already set by the Storage integration),
    `DB_NULL_POOL=true`, `FRONTEND_URL=https://www.onhouse.es`,
    `ALLOWED_HOSTS=<project>.vercel.app`, `CLIENT_IP_HEADER=x-real-ip`,
-   `STORAGE_BACKEND=s3` + the `S3_*` variables (see section 7).
+   `STORAGE_BACKEND=blob` with a public Blob store connected (see section 7).
 4. **Frontend:** in the existing Vercel project set `API_URL=https://<backend>.vercel.app`
    and redeploy. The browser only talks to `www.onhouse.es/api/*` (proxied).
 5. Check `https://www.onhouse.es/api/health` and log in at `/admin`.

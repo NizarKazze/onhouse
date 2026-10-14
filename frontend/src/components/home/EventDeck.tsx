@@ -116,20 +116,22 @@ export function EventDeck({ events }: { events: Event[] }) {
                       style={{
                         gridTemplateColumns: narrow
                           ? "minmax(0,1fr)"
-                          : "minmax(0,.86fr) minmax(0,1.14fr)",
+                          : "minmax(0,1.1fr) minmax(0,.9fr)",
                         gridTemplateRows: narrow
-                          ? "clamp(150px,36vw,220px) minmax(0,1fr)"
+                          ? "auto minmax(0,1fr)"
                           : "minmax(0,1fr)",
                         pointerEvents: interactive ? "auto" : "none",
                       }}
                     >
-                      <div className="relative min-h-0 overflow-hidden bg-onh-panel">
+                      {/* Event photos are 1920x1080: shown whole in a 16:9
+                          frame, centred in the column on wide screens. */}
+                      <div className="relative min-h-0 self-center overflow-hidden bg-onh-panel [aspect-ratio:16/9]">
                         <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
                           <ImageSlot
                             src={event.image}
                             caption={`${event.title} poster`}
                             alt={`${event.title} poster`}
-                            sizes="(max-width: 900px) 100vw, 40vw"
+                            sizes="(max-width: 900px) 100vw, 55vw"
                           />
                         </div>
                         <div className="pointer-events-none absolute top-[24px] left-0 bg-onh-bone px-[14px] py-[9px] text-[10.5px] font-bold tracking-[0.24em] text-onh-black">

@@ -81,8 +81,10 @@ class Settings(BaseSettings):
 
     # --- Image uploads ------------------------------------------------------
     # local: files in UPLOAD_DIR (needs a persistent disk).
-    # s3: any S3-compatible bucket (Cloudflare R2, AWS S3...). Use on Vercel/Render.
-    storage_backend: Literal["local", "s3"] = Field("local", alias="STORAGE_BACKEND")
+    # blob: Vercel Blob (BLOB_READ_WRITE_TOKEN, set by Vercel's Blob integration).
+    # s3: any S3-compatible bucket (Cloudflare R2, AWS S3...).
+    storage_backend: Literal["local", "blob", "s3"] = Field("local", alias="STORAGE_BACKEND")
+    blob_read_write_token: str = Field("", alias="BLOB_READ_WRITE_TOKEN")
     upload_dir: str = Field("uploads", alias="UPLOAD_DIR")
     max_upload_mb: float = Field(4, gt=0, le=20, alias="MAX_UPLOAD_MB")
     s3_bucket: str = Field("", alias="S3_BUCKET")
@@ -110,6 +112,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _production_guards(self) -> "Settings":
+        if self.storage_backend == "blob" and not self.blob_read_write_token:
+            raise ValueError("STORAGE_BACKEND=blob requires BLOB_READ_WRITE_TOKEN")
         if self.storage_backend == "s3":
             required = {
                 "S3_BUCKET": self.s3_bucket,
