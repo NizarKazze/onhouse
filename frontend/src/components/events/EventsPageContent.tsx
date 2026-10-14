@@ -54,7 +54,7 @@ export function EventsPageContent({
               style={{ gridTemplateColumns: halfCols }}
             >
               <div className="relative self-center overflow-hidden bg-onh-panel [aspect-ratio:16/9]">
-                <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
+                <div className="absolute inset-0">
                   <ImageSlot
                     src={nextEvent.image}
                     caption={`${nextEvent.title} key visual`}
@@ -137,7 +137,7 @@ export function EventsPageContent({
                 ? past.slice(0, 3).map((event) => (
                     <div
                       key={event.id}
-                      className="relative overflow-hidden grayscale contrast-[1.15] brightness-[0.8] [aspect-ratio:16/9]"
+                      className="relative overflow-hidden [aspect-ratio:16/9]"
                     >
                       <ImageSlot
                         src={event.image}
@@ -150,7 +150,7 @@ export function EventsPageContent({
                 : ["onh-arch-1", "onh-arch-2", "onh-arch-3"].map((slot) => (
                     <div
                       key={slot}
-                      className="relative overflow-hidden grayscale contrast-[1.15] brightness-[0.8] [aspect-ratio:16/9]"
+                      className="relative overflow-hidden [aspect-ratio:16/9]"
                     >
                       <ImageSlot id={slot} sizes="(max-width: 900px) 33vw, 17vw" />
                     </div>

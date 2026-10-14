@@ -55,7 +55,7 @@ export function NextEvent({ event }: { event: Event | null }) {
           }}
         >
           <div className="relative self-center overflow-hidden bg-onh-panel [aspect-ratio:16/9]">
-            <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
+            <div className="absolute inset-0">
               <ImageSlot
                 src={event.image}
                 caption={`${event.title} poster`}

@@ -126,7 +126,7 @@ export function EventDeck({ events }: { events: Event[] }) {
                       {/* Event photos are 1920x1080: shown whole in a 16:9
                           frame, centred in the column on wide screens. */}
                       <div className="relative min-h-0 self-center overflow-hidden bg-onh-panel [aspect-ratio:16/9]">
-                        <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.8]">
+                        <div className="absolute inset-0">
                           <ImageSlot
                             src={event.image}
                             caption={`${event.title} poster`}
