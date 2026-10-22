@@ -80,9 +80,11 @@ export type Dictionary = {
   navigate: string;
   reach: string;
   legal: string;
+  legalNotice: string;
   privacy: string;
   cookies: string;
   rights: string;
+  lastUpdated: string;
   /** States that the design implies but does not spell out. */
   noEvents: string;
   errorTitle: string;
@@ -195,9 +197,11 @@ export const copy: Record<Locale, Dictionary> = {
     navigate: "NAVIGATE",
     reach: "REACH US",
     legal: "LEGAL",
+    legalNotice: "Legal Notice",
     privacy: "Privacy Policy",
     cookies: "Cookie Policy",
     rights: "ALL RIGHTS RESERVED",
+    lastUpdated: "LAST UPDATED",
     noEvents: "NO DATES ANNOUNCED YET.",
     errorTitle: "SOMETHING BROKE.",
     errorBody: "The night goes on. Try again, or head back to the start.",
@@ -307,9 +311,11 @@ export const copy: Record<Locale, Dictionary> = {
     navigate: "NAVEGAR",
     reach: "CONTACTO",
     legal: "LEGAL",
+    legalNotice: "Aviso Legal",
     privacy: "Política de Privacidad",
     cookies: "Política de Cookies",
     rights: "TODOS LOS DERECHOS RESERVADOS",
+    lastUpdated: "ÚLTIMA ACTUALIZACIÓN",
     noEvents: "AÚN NO HAY FECHAS ANUNCIADAS.",
     errorTitle: "ALGO HA FALLADO.",
     errorBody: "La noche sigue. Inténtalo de nuevo o vuelve al principio.",

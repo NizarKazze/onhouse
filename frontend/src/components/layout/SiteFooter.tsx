@@ -87,12 +87,15 @@ export function SiteFooter() {
 
           <div className="flex flex-col gap-[12px]">
             <div className={columnLabel}>{t.legal}</div>
-            <a href="#privacy" className={linkClass}>
+            <SectionLink href="/legal-notice" className={linkClass}>
+              {t.legalNotice}
+            </SectionLink>
+            <SectionLink href="/privacy" className={linkClass}>
               {t.privacy}
-            </a>
-            <a href="#cookies" className={linkClass}>
+            </SectionLink>
+            <SectionLink href="/cookies" className={linkClass}>
               {t.cookies}
-            </a>
+            </SectionLink>
           </div>
         </div>
 
