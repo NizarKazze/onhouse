@@ -17,6 +17,7 @@ export type Dictionary = {
   navExperience: string;
   navAbout: string;
   navContact: string;
+  navRadio: string;
   menu: string;
   close: string;
   tickets: string;
@@ -61,6 +62,28 @@ export type Dictionary = {
   vctrBody: string;
   vctrCta: string;
   ibizaBody: string;
+  radioKicker: string;
+  radioBody: string;
+  radioListen: string;
+  radioStop: string;
+  radioListenCta: string;
+  radioListening: string;
+  radioConnecting: string;
+  radioLiveFrom: string;
+  radioOffAirBody: string;
+  radioLive: string;
+  radioOffline: string;
+  radioStationLabel: string;
+  radioScheduleLabel: string;
+  radioTbc: string;
+  radioListeners: string;
+  radioVolume: string;
+  radioNowPlaying: string;
+  radioError: string;
+  radioArchive: string;
+  radioArchiveSub: string;
+  radioArchiveEmpty: string;
+  radioListenEpisode: string;
   contactKicker: string;
   contactTitle: string;
   contactBody: string;
@@ -106,6 +129,7 @@ export const copy: Record<Locale, Dictionary> = {
     navExperience: "EXPERIENCE",
     navAbout: "ABOUT",
     navContact: "CONTACT",
+    navRadio: "RADIO",
     menu: "MENU",
     close: "CLOSE",
     tickets: "GET TICKETS",
@@ -174,6 +198,30 @@ export const copy: Record<Locale, Dictionary> = {
     vctrCta: "DISCOVER VCTR",
     ibizaBody:
       "Ibiza read through its music culture rather than its postcards. Clubs, dancefloors, booths, sound systems and the hours between midnight and dawn. Ibiza after dark, not Ibiza on holiday.",
+    radioKicker: "ON AIR",
+    radioBody:
+      "ONHOUSE now plays on Pure Ibiza Radio. The same deep, long-form house that drives our nights, broadcast live from the island. Press play and tune in from anywhere.",
+    radioListen: "Listen live to Pure Ibiza Radio",
+    radioStop: "Stop the radio",
+    radioListenCta: "LISTEN LIVE",
+    radioListening: "LISTENING LIVE",
+    radioConnecting: "CONNECTING",
+    radioLiveFrom: "Live from Pure Ibiza Radio, broadcasting from the island.",
+    radioOffAirBody: "The station is not broadcasting right now. Check back in a while.",
+    radioLive: "ON AIR · LIVE",
+    radioOffline: "OFF AIR",
+    radioStationLabel: "STATION",
+    radioScheduleLabel: "THE ONHOUSE SHOW",
+    radioTbc: "TO BE CONFIRMED",
+    radioListeners: "LISTENING NOW",
+    radioVolume: "VOLUME",
+    radioNowPlaying: "NOW PLAYING",
+    radioError: "The stream is not responding right now. Try again in a moment.",
+    radioArchive: "ARCHIVE",
+    radioArchiveSub: "PAST SHOWS",
+    radioArchiveEmpty:
+      "Every ONHOUSE show on Pure Ibiza Radio will be uploaded here after it airs.",
+    radioListenEpisode: "Listen to",
     contactKicker: "CONTACT",
     contactTitle: "BOOKINGS, COLLABORATIONS, NIGHTS.",
     contactBody:
@@ -220,6 +268,7 @@ export const copy: Record<Locale, Dictionary> = {
     navExperience: "EXPERIENCIA",
     navAbout: "NOSOTROS",
     navContact: "CONTACTO",
+    navRadio: "RADIO",
     menu: "MENÚ",
     close: "CERRAR",
     tickets: "ENTRADAS",
@@ -288,6 +337,30 @@ export const copy: Record<Locale, Dictionary> = {
     vctrCta: "DESCUBRIR VCTR",
     ibizaBody:
       "Ibiza leída desde su cultura musical y no desde sus postales. Clubes, pistas, cabinas, equipos de sonido y las horas entre la medianoche y el amanecer. Ibiza de noche, no Ibiza de vacaciones.",
+    radioKicker: "EN ANTENA",
+    radioBody:
+      "ONHOUSE ahora pincha en Pure Ibiza Radio. El mismo house profundo y de sesión larga que mueve nuestras noches, en directo desde la isla. Dale al play y escúchalo desde donde estés.",
+    radioListen: "Escuchar Pure Ibiza Radio en directo",
+    radioStop: "Parar la radio",
+    radioListenCta: "ESCUCHAR EN DIRECTO",
+    radioListening: "ESCUCHANDO EN DIRECTO",
+    radioConnecting: "CONECTANDO",
+    radioLiveFrom: "Directo de Pure Ibiza Radio, emitiendo desde la isla.",
+    radioOffAirBody: "La emisora no está transmitiendo ahora mismo. Vuelve en un rato.",
+    radioLive: "EN ANTENA · DIRECTO",
+    radioOffline: "FUERA DE ANTENA",
+    radioStationLabel: "EMISORA",
+    radioScheduleLabel: "EL PROGRAMA ONHOUSE",
+    radioTbc: "POR CONFIRMAR",
+    radioListeners: "ESCUCHANDO AHORA",
+    radioVolume: "VOLUMEN",
+    radioNowPlaying: "SONANDO",
+    radioError: "El stream no responde ahora mismo. Inténtalo de nuevo en un momento.",
+    radioArchive: "ARCHIVO",
+    radioArchiveSub: "PROGRAMAS ANTERIORES",
+    radioArchiveEmpty:
+      "Cada programa de ONHOUSE en Pure Ibiza Radio se subirá aquí después de emitirse.",
+    radioListenEpisode: "Escuchar",
     contactKicker: "CONTACTO",
     contactTitle: "BOOKINGS, COLABORACIONES, NOCHES.",
     contactBody:

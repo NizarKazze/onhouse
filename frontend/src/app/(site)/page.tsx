@@ -8,6 +8,7 @@ import { Experience } from "@/components/home/Experience";
 import { Hero } from "@/components/home/Hero";
 import { IbizaAfterDark } from "@/components/home/IbizaAfterDark";
 import { NextEvent } from "@/components/home/NextEvent";
+import { Radio } from "@/components/home/Radio";
 import { Sound } from "@/components/home/Sound";
 import { fetchArtistsPreview } from "@/lib/artists";
 import { fetchNextEvent, fetchUpcomingEvents } from "@/lib/events";
@@ -31,6 +32,7 @@ export default async function HomePage() {
       <Experience />
       <ArtistsPreview artists={artists} />
       <IbizaAfterDark />
+      <Radio />
       <Contact />
     </>
   );

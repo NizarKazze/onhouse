@@ -14,6 +14,7 @@ export function SiteFooter() {
     { href: "/events", label: t.navEvents },
     { href: "/artists", label: t.navArtists },
     { href: "/#experience", label: t.navExperience },
+    { href: "/#radio", label: t.navRadio },
     { href: "/#about", label: t.navAbout },
     { href: "/#contact", label: t.navContact },
   ];
