@@ -83,11 +83,11 @@ function EpisodeList() {
 
 export function Radio() {
   const { t, lang } = useLanguage();
-  const { status, volume, setVolume } = useRadioWithStatus();
+  const { status, onAir, volume, setVolume } = useRadioWithStatus();
 
-  // Until the first status read, assume live: the stream is up almost always,
-  // and "off air" flashing on load would be the wrong first impression.
-  const live = status?.live ?? true;
+  // Live means our slot is on. Until the first status read inside it, assume
+  // the stream is up: it almost always is.
+  const live = onAir && (status?.live ?? true);
 
   return (
     <section id="radio" className="onh-gutter-x overflow-hidden py-[clamp(80px,11vw,150px)]">
@@ -122,9 +122,12 @@ export function Radio() {
             <Reveal>
               <dl className={`m-0 grid grid-cols-2 border-t ${RULE}`}>
                 <InfoCell label={t.radioStationLabel}>{radio.name}</InfoCell>
-                <InfoCell label={t.radioScheduleLabel}>{radio.show?.[lang] ?? t.radioTbc}</InfoCell>
+                <InfoCell label={t.radioScheduleLabel}>
+                  {radio.schedule.label[lang]}
+                  <span className="onh-meta-label mt-[6px] block">{t.radioIbizaTime}</span>
+                </InfoCell>
                 <InfoCell label={t.radioListeners}>
-                  {status?.live && status.listeners !== null ? status.listeners : "—"}
+                  {live && status?.listeners != null ? status.listeners : "—"}
                 </InfoCell>
                 <div className={`flex flex-col gap-[14px] border-b ${RULE} py-[18px] pr-[16px]`}>
                   <dt className="onh-meta-label">

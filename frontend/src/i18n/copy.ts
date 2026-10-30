@@ -75,7 +75,8 @@ export type Dictionary = {
   radioOffline: string;
   radioStationLabel: string;
   radioScheduleLabel: string;
-  radioTbc: string;
+  radioIbizaTime: string;
+  radioNextShow: string;
   radioListeners: string;
   radioVolume: string;
   radioNowPlaying: string;
@@ -200,19 +201,21 @@ export const copy: Record<Locale, Dictionary> = {
       "Ibiza read through its music culture rather than its postcards. Clubs, dancefloors, booths, sound systems and the hours between midnight and dawn. Ibiza after dark, not Ibiza on holiday.",
     radioKicker: "ON AIR",
     radioBody:
-      "ONHOUSE now plays on Pure Ibiza Radio. The same deep, long-form house that drives our nights, broadcast live from the island. Press play and tune in from anywhere.",
+      "ONHOUSE now plays on Pure Ibiza Radio. The same deep, long-form house that drives our nights, broadcast live from the island every Friday. Tune in from anywhere.",
     radioListen: "Listen live to Pure Ibiza Radio",
     radioStop: "Stop the radio",
     radioListenCta: "LISTEN LIVE",
     radioListening: "LISTENING LIVE",
     radioConnecting: "CONNECTING",
     radioLiveFrom: "Live from Pure Ibiza Radio, broadcasting from the island.",
-    radioOffAirBody: "The station is not broadcasting right now. Check back in a while.",
+    radioOffAirBody:
+      "The player switches on during the ONHOUSE show, every Friday from 18:00 to 19:00 Ibiza time.",
     radioLive: "ON AIR · LIVE",
     radioOffline: "OFF AIR",
     radioStationLabel: "STATION",
     radioScheduleLabel: "THE ONHOUSE SHOW",
-    radioTbc: "TO BE CONFIRMED",
+    radioIbizaTime: "IBIZA TIME",
+    radioNextShow: "NEXT SHOW",
     radioListeners: "LISTENING NOW",
     radioVolume: "VOLUME",
     radioNowPlaying: "NOW PLAYING",
@@ -339,19 +342,21 @@ export const copy: Record<Locale, Dictionary> = {
       "Ibiza leída desde su cultura musical y no desde sus postales. Clubes, pistas, cabinas, equipos de sonido y las horas entre la medianoche y el amanecer. Ibiza de noche, no Ibiza de vacaciones.",
     radioKicker: "EN ANTENA",
     radioBody:
-      "ONHOUSE ahora pincha en Pure Ibiza Radio. El mismo house profundo y de sesión larga que mueve nuestras noches, en directo desde la isla. Dale al play y escúchalo desde donde estés.",
+      "ONHOUSE ahora pincha en Pure Ibiza Radio. El mismo house profundo y de sesión larga que mueve nuestras noches, en directo desde la isla cada viernes. Escúchalo desde donde estés.",
     radioListen: "Escuchar Pure Ibiza Radio en directo",
     radioStop: "Parar la radio",
     radioListenCta: "ESCUCHAR EN DIRECTO",
     radioListening: "ESCUCHANDO EN DIRECTO",
     radioConnecting: "CONECTANDO",
     radioLiveFrom: "Directo de Pure Ibiza Radio, emitiendo desde la isla.",
-    radioOffAirBody: "La emisora no está transmitiendo ahora mismo. Vuelve en un rato.",
+    radioOffAirBody:
+      "El reproductor se activa durante el programa de ONHOUSE, cada viernes de 18:00 a 19:00, hora de Ibiza.",
     radioLive: "EN ANTENA · DIRECTO",
     radioOffline: "FUERA DE ANTENA",
     radioStationLabel: "EMISORA",
     radioScheduleLabel: "EL PROGRAMA ONHOUSE",
-    radioTbc: "POR CONFIRMAR",
+    radioIbizaTime: "HORA DE IBIZA",
+    radioNextShow: "PRÓXIMO PROGRAMA",
     radioListeners: "ESCUCHANDO AHORA",
     radioVolume: "VOLUMEN",
     radioNowPlaying: "SONANDO",

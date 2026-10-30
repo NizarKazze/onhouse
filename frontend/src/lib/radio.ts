@@ -17,10 +17,18 @@ export const radio = {
   /** Matches the source in the status JSON when the server has several mounts. */
   mount: "/stream.mp3",
   /**
-   * The ONHOUSE show slot, e.g. { en: "EVERY FRIDAY · 22:00", es: "CADA VIERNES · 22:00" }.
-   * Null until the slot is confirmed; the section simply leaves the line out.
+   * The ONHOUSE show slot, in Ibiza time. The stream carries Pure's whole
+   * programme, so the player only switches on inside this window. Keep
+   * `label` in step with the numbers.
    */
-  show: null as { en: string; es: string } | null,
+  schedule: {
+    timeZone: "Europe/Madrid",
+    /** 0 = Sunday … 5 = Friday. */
+    weekday: 5,
+    start: "18:00",
+    end: "19:00",
+    label: { en: "FRIDAYS · 18:00–19:00", es: "VIERNES · 18:00–19:00" },
+  },
   /**
    * Past shows, newest first, each linking to wherever it is uploaded
    * (SoundCloud, Mixcloud…). Empty until the first show airs.
@@ -73,4 +81,64 @@ export async function fetchRadioStatus(signal?: AbortSignal): Promise<RadioStatu
     if ((error as Error).name === "AbortError") throw error;
     return { live: false, listeners: null, title: null };
   }
+}
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MINUTES_PER_WEEK = 7 * 24 * 60;
+
+const toMinutes = (hhmm: string) => {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+};
+
+/** Minutes since Sunday 00:00 in the show's time zone. */
+function weekMinute(date: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: radio.schedule.timeZone,
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return WEEKDAYS.indexOf(get("weekday")) * 1440 + Number(get("hour")) * 60 + Number(get("minute"));
+}
+
+const showStart = () => radio.schedule.weekday * 1440 + toMinutes(radio.schedule.start);
+const showEnd = () => radio.schedule.weekday * 1440 + toMinutes(radio.schedule.end);
+
+/** True while the ONHOUSE show is on (start inclusive, end exclusive). */
+export function isOnAir(now: Date): boolean {
+  const minute = weekMinute(now);
+  return minute >= showStart() && minute < showEnd();
+}
+
+/** When the next show starts (or the current one started, while on air). */
+export function nextShowStart(now: Date): Date {
+  const minute = weekMinute(now);
+  const ahead = isOnAir(now)
+    ? showStart() - minute
+    : (showStart() - minute + MINUTES_PER_WEEK) % MINUTES_PER_WEEK;
+  // Whole minutes from now, then one correction pass in case a daylight
+  // saving change falls in between and moves the wall clock by an hour.
+  const base = new Date(Math.floor(now.getTime() / 60_000) * 60_000);
+  let next = new Date(base.getTime() + ahead * 60_000);
+  const drift = showStart() - weekMinute(next);
+  if (drift !== 0 && Math.abs(drift) <= 120) next = new Date(next.getTime() + drift * 60_000);
+  return next;
+}
+
+/** "FRI 6 NOV · 18:00" / "VIE 6 NOV · 18:00", in Ibiza time. */
+export function formatShowDate(date: Date, locale: string): string {
+  const parts = new Intl.DateTimeFormat(locale, {
+    timeZone: radio.schedule.timeZone,
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value.replace(".", "") ?? "";
+  return `${get("weekday")} ${get("day")} ${get("month")} · ${get("hour")}:${get("minute")}`.toUpperCase();
 }

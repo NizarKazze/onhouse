@@ -8,14 +8,25 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
-import { fetchRadioStatus, radio, type RadioStatus } from "@/lib/radio";
+import {
+  fetchRadioStatus,
+  isOnAir,
+  nextShowStart,
+  radio,
+  type RadioStatus,
+} from "@/lib/radio";
 
 export type RadioState = "idle" | "loading" | "playing" | "error";
 
 type RadioContextValue = {
   state: RadioState;
   status: RadioStatus | null;
+  /** Inside the ONHOUSE show slot. False on the server and until hydration. */
+  onAir: boolean;
+  /** Start of the next show (or of the current one while on air); null on the server. */
+  nextShow: Date | null;
   volume: number;
   toggle: () => void;
   setVolume: (volume: number) => void;
@@ -26,6 +37,30 @@ type RadioContextValue = {
 const RadioContext = createContext<RadioContextValue | null>(null);
 
 const STATUS_POLL_MS = 30_000;
+const CLOCK_TICK_MS = 15_000;
+
+function subscribeToClock(onChange: () => void) {
+  const id = window.setInterval(onChange, CLOCK_TICK_MS);
+  return () => window.clearInterval(id);
+}
+
+/** The time, in 15-second steps: often enough to open and close the slot on cue. */
+function useClock(): Date | null {
+  const tick = useSyncExternalStore(
+    subscribeToClock,
+    () => Math.floor(Date.now() / CLOCK_TICK_MS),
+    () => null,
+  );
+  return useMemo(() => (tick === null ? null : new Date(tick * CLOCK_TICK_MS)), [tick]);
+}
+
+function stopAudio(audio: HTMLAudioElement) {
+  // Drop the source rather than just pausing: a paused live stream keeps
+  // downloading, and resuming it would play stale audio.
+  audio.pause();
+  audio.removeAttribute("src");
+  audio.load();
+}
 
 /**
  * Owns the one `<audio>` element for the site. It sits in the site chrome, so
@@ -39,25 +74,34 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<RadioStatus | null>(null);
   const [watchers, setWatchers] = useState(0);
 
+  // The stream is Pure's whole programme; it only plays during our slot.
+  const now = useClock();
+  const onAir = now !== null && isOnAir(now);
+  const nextShow = useMemo(() => (now === null ? null : nextShowStart(now)), [now]);
+
+  // The slot closing ends playback: the state now, the audio in the effect below.
+  const active = state === "playing" || state === "loading";
+  if (!onAir && active) setState("idle");
+  useEffect(() => {
+    if (!onAir && audioRef.current?.getAttribute("src")) stopAudio(audioRef.current);
+  }, [onAir]);
+
   const toggle = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (state === "playing" || state === "loading") {
-      // Drop the source rather than just pausing: a paused live stream keeps
-      // downloading, and resuming it would play stale audio.
-      audio.pause();
-      audio.removeAttribute("src");
-      audio.load();
+      stopAudio(audio);
       setState("idle");
       return;
     }
+    if (!onAir) return;
 
     setState("loading");
     audio.volume = volume;
     audio.src = radio.streamUrl;
     audio.play().catch(() => setState("error"));
-  }, [state, volume]);
+  }, [state, volume, onAir]);
 
   const setVolume = useCallback((next: number) => {
     setVolumeState(next);
@@ -69,7 +113,8 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
     return () => setWatchers((n) => n - 1);
   }, []);
 
-  const polling = watchers > 0 || state === "playing";
+  // Only during the slot: outside it there is nothing of ours to report.
+  const polling = onAir && (watchers > 0 || state === "playing");
   useEffect(() => {
     if (!polling) return;
     const controller = new AbortController();
@@ -84,8 +129,8 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
   }, [polling]);
 
   const value = useMemo(
-    () => ({ state, status, volume, toggle, setVolume, watchStatus }),
-    [state, status, volume, toggle, setVolume, watchStatus],
+    () => ({ state, status, onAir, nextShow, volume, toggle, setVolume, watchStatus }),
+    [state, status, onAir, nextShow, volume, toggle, setVolume, watchStatus],
   );
 
   return (
