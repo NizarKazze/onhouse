@@ -152,13 +152,13 @@ export function VctrFocus() {
                   transform: `translate3d(0,${drift.toFixed(2)}px,0)`,
                 }}
               >
-                <div className="absolute inset-0 grayscale contrast-[1.15] brightness-[0.76]">
+                <div className="absolute inset-0 contrast-[1.05] brightness-[0.9]">
                   <ImageSlot
                     id={image.slot}
                     sizes="(max-width: 900px) 50vw, 30vw"
                   />
                 </div>
-                <div className="pointer-events-none absolute inset-0 bg-[rgba(10,10,10,.28)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[rgba(10,10,10,.12)]" />
               </div>
             );
           })}
@@ -187,7 +187,9 @@ export function VctrFocus() {
               {t.vctrBody}
             </p>
             <a
-              href="#vctr"
+              href="https://vctrdj.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="onh-btn-solid mt-[clamp(22px,2.8vw,38px)] self-start px-[30px] py-[17px] text-[12px]"
             >
               {t.vctrCta}

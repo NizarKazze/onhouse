@@ -418,5 +418,5 @@ export const contactDetails = {
   instagramHref: "https://instagram.com/onhouseofficial",
   site: "www.onhouse.es",
   siteHref: "https://www.onhouse.es",
-  founder: "Bartolomé Muñoz Pons",
+  founder: "Víctor Muñoz Martínez",
 } as const;

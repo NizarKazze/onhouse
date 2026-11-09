@@ -14,7 +14,7 @@ export function ArtistCard({
   return (
     <>
       <div className="relative overflow-hidden bg-onh-panel [aspect-ratio:3/4]">
-        <div className="absolute inset-0 grayscale contrast-[1.12] brightness-[0.78]">
+        <div className="absolute inset-0 contrast-[1.05] brightness-[0.92]">
           <ImageSlot
             src={artist.image}
             caption="Artist portrait"
